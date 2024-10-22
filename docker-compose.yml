@@ -1,0 +1,53 @@
+version: "3.8"
+
+services:
+  mongo:
+    build:
+      context: ./services/mongodb
+      args:
+        MONGO_VERSION: 6
+    environment:
+      MONGO_REPLICA_PORT: 27017
+      MONGO_REPLICA_HOST: localhost
+      MONGO_COMMAND: 'mongosh'
+      MONGO_INITDB_ROOT_USERNAME: dappAdmin
+      MONGO_INITDB_ROOT_PASSWORD: S3cur3P@ssw0rdM0ng0
+    container_name: mongo-dapp-container
+    restart: unless-stopped
+    healthcheck:
+      # Use "mongo" instead of "mongosh" before v5.0
+      test: ['CMD', 'mongosh', 'admin', '--port', '27019', '--eval', "db.adminCommand('ping').ok"]
+      interval: 5s
+      timeout: 2s
+      retries: 20
+
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./volumes/mongo_data:/data/db
+
+  mysql:
+    image: mysql:latest
+    container_name: mysql-dapp-container
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: S3cur3P@ssw0rdMySQL
+      MYSQL_DATABASE: dapp_database
+      MYSQL_USER: dapp_user
+      MYSQL_PASSWORD: S3cur3D@ppUs3r
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./volumes/mysql_data:/var/lib/mysql
+    networks:
+      - dapp_network
+
+networks:
+  dapp_network:
+    driver: bridge
+
+volumes:
+  mongo_data:
+    driver: local
+  mysql_data:
+    driver: local

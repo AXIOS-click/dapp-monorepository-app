@@ -1,0 +1,98 @@
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Message {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  timestamp DateTime
+
+  evento   Evento? @relation(fields: [eventoId], references: [id], onDelete: Cascade)
+  eventoId String? @db.ObjectId
+
+  company       CompanyCode? @relation(fields: [companyCodeId], references: [id], onDelete: Cascade)
+  companyCodeId String?      @db.ObjectId
+
+  subCompany       SubCompanyCode? @relation(fields: [subCompanyCodeId], references: [id], onDelete: Cascade)
+  subCompanyCodeId String?         @db.ObjectId
+
+  machine   MachineId? @relation(fields: [machineId], references: [id], onDelete: Cascade)
+  machineId String?    @db.ObjectId
+
+  area   Area?   @relation(fields: [areaId], references: [id], onDelete: Cascade)
+  areaId String? @db.ObjectId
+
+  plc   Plc?    @relation(fields: [plcId], references: [id], onDelete: Cascade)
+  plcId String? @db.ObjectId
+
+  linea   Linea?  @relation(fields: [lineaId], references: [id], onDelete: Cascade)
+  lineaId String? @db.ObjectId
+
+  variables Variable[]
+
+  @@index([timestamp])
+}
+
+model Variable {
+  id    String @id @default(auto()) @map("_id") @db.ObjectId
+  name  String
+  value String
+
+  messageId String  @db.ObjectId
+  message   Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+
+  @@index([name])
+}
+
+model CompanyCode {
+  id       String    @id @default(auto()) @map("_id") @db.ObjectId
+  name     String    @unique
+  messages Message[]
+}
+
+model SubCompanyCode {
+  id       String    @id @default(auto()) @map("_id") @db.ObjectId
+  name     String    @unique
+  messages Message[]
+}
+
+model MachineId {
+  id       String    @id @default(auto()) @map("_id") @db.ObjectId
+  name     String    @unique
+  messages Message[]
+}
+
+model Area {
+  id       String    @id @default(auto()) @map("_id") @db.ObjectId
+  name     String    @unique
+  messages Message[]
+}
+
+model Plc {
+  id       String    @id @default(auto()) @map("_id") @db.ObjectId
+  name     String    @unique
+  messages Message[]
+}
+
+model Linea {
+  id       String    @id @default(auto()) @map("_id") @db.ObjectId
+  name     String    @unique
+  messages Message[]
+}
+
+model Evento {
+  id       String    @id @default(auto()) @map("_id") @db.ObjectId
+  name     String    @unique
+  messages Message[]
+}
+
+model ErrorLog {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  content   String
+  error     String
+  timestamp DateTime @default(now())
+}
