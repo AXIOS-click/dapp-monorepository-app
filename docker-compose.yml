@@ -8,19 +8,14 @@ services:
         MONGO_VERSION: 6
     environment:
       MONGO_REPLICA_PORT: 27017
-      MONGO_REPLICA_HOST: localhost
-      MONGO_COMMAND: 'mongosh'
+      MONGO_REPLICA_HOST: mongo-dapp-container
+      MONGO_COMMAND: "mongosh"
       MONGO_INITDB_ROOT_USERNAME: dappAdmin
       MONGO_INITDB_ROOT_PASSWORD: S3cur3P@ssw0rdM0ng0
     container_name: mongo-dapp-container
     restart: unless-stopped
-    healthcheck:
-      # Use "mongo" instead of "mongosh" before v5.0
-      test: ['CMD', 'mongosh', 'admin', '--port', '27019', '--eval', "db.adminCommand('ping').ok"]
-      interval: 5s
-      timeout: 2s
-      retries: 20
-
+    networks:
+      - dapp_network
     ports:
       - "27017:27017"
     volumes:
@@ -39,6 +34,32 @@ services:
       - "3306:3306"
     volumes:
       - ./volumes/mysql_data:/var/lib/mysql
+    networks:
+      - dapp_network
+
+  dapp-core-ms:
+    build:
+      context: ./apps/dapp-core-ms
+    container_name: dapp-core-ms-container
+    env_file:
+      - ./apps/dapp-core-ms/.env
+    ports:
+      - "3001:3001"
+    depends_on:
+      - mongo
+    networks:
+      - dapp_network
+
+  dapp-etl-ms:
+    build:
+      context: ./apps/dapp-etl-ms
+    container_name: dapp-etl-ms-container
+    env_file:
+      - ./apps/dapp-etl-ms/.env
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mongo
     networks:
       - dapp_network
 

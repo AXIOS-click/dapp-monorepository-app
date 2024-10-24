@@ -50,8 +50,4 @@ export class SaveMessageUseCase {
       },
     });
   }
-
-  async getMessagesByFilters(filters: any) {
-    return this.messageRepository.findMessages(filters);
-  }
 }

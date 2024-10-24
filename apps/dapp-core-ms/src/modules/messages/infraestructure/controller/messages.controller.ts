@@ -16,6 +16,8 @@ export class MessagesController {
     @Query('plcId') plcId?: string,
     @Query('lineaId') lineaId?: string,
     @Query('eventoId') eventoId?: string,
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
   ) {
     const filters = {
       ...(startDate &&
@@ -34,6 +36,6 @@ export class MessagesController {
       ...(eventoId && { eventoId }),
     };
 
-    return this.saveMessageUseCase.getMessagesByFilters(filters);
+    return this.saveMessageUseCase.getMessagesByFilters(filters, page, limit);
   }
 }
