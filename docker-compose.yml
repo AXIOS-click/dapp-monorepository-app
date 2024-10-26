@@ -34,8 +34,10 @@ services:
       - "3306:3306"
     volumes:
       - ./volumes/mysql_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - dapp_network
+
 
   dapp-core-ms:
     build:
