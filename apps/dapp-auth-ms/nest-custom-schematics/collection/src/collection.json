@@ -1,0 +1,9 @@
+{
+  "$schema": "../node_modules/@angular-devkit/schematics/collection-schema.json",
+  "schematics": {
+    "module": {
+      "description": "Genera un módulo con estructura DDD personalizada",
+      "factory": "./module/index#module"
+    }
+  }
+}
