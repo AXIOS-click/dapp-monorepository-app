@@ -1,8 +1,8 @@
-import React, { FC, lazy, Suspense, useMemo } from 'react';
+import { FC, lazy, Suspense, useMemo } from "react";
 
 const layouts = {
-  AuthenticatedLayout: lazy(() => import('./AuthLayout')),
-  PublicLayout: lazy(() => import('./PublicLayout')),
+  AuthenticatedLayout: lazy(() => import("./AuthLayout")),
+  PublicLayout: lazy(() => import("./PublicLayout")),
 };
 
 export const PrincipalLayout: FC = () => {
