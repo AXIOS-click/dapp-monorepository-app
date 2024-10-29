@@ -8,10 +8,19 @@ export class PrismaRoleRepository implements IRolesRepository {
   constructor(private readonly prisma: PrismaService) {}
 
   async getAllRoles(): Promise<Role[]> {
-    const roles = await this.prisma.role.findMany();
+    const roles = await this.prisma.role.findMany({
+      include: {
+        modules: true,
+      },
+    });
 
-    const mappedRoles = roles.map((role) => role.name);
-
-    return roles.map((role) => new Role(role.id, role.name, mappedRoles));
+    return roles.map(
+      (role) =>
+        new Role(
+          role.id,
+          role.name,
+          role.modules.map((module) => module.name),
+        ),
+    );
   }
 }
