@@ -1,8 +1,8 @@
 import { Inject } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcryptjs';
 import { UserRepository } from 'src/modules/users/domain/repositories/user.repository.interface';
 import { InvalidCredentialsException } from '../exceptions/InvalidCredentials.exception';
-import * as bcrypt from 'bcrypt';
 export class LoginUseCase {
   constructor(
     @Inject('UserRepository')

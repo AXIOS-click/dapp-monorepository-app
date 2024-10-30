@@ -16,9 +16,5 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
   providers: [AppService],
 })
 export class AppModule {
-  constructor(private readonly configService: ConfigService) {
-    const rabbitUrl = this.configService.get<string>('DATABASE_URL');
-
-    console.log('RabbitMQ URL:', rabbitUrl);
-  }
+  constructor(private readonly configService: ConfigService) {}
 }
