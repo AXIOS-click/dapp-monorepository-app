@@ -1,3 +1,5 @@
+import { AuthStore } from "@/features/auth/application/stores/AuthStore";
+import { useRoles } from "@/features/roles/application/hooks/useGetRoles";
 import { FC, lazy, Suspense, useMemo } from "react";
 
 const layouts = {
@@ -6,9 +8,9 @@ const layouts = {
 };
 
 export const PrincipalLayout: FC = () => {
-  const { authenticated } = {
-    authenticated: false,
-  }; // TODO: esto debe ser reemplazado por el hook de autenticación
+  const { signedUser: authenticated } = AuthStore();
+
+  useRoles();
 
   const AppLayout = useMemo(() => {
     return authenticated ? layouts.AuthenticatedLayout : layouts.PublicLayout;
