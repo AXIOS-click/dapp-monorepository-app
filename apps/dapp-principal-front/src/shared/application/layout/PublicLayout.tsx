@@ -1,7 +1,11 @@
-import React from 'react';
+import { PrincipalViews } from "../components/view/PrincipalView";
 
 const PublicLayout = () => {
-  return <div>PublicLayout</div>;
+  return (
+    <div className="flex flex-auto flex-col h-[100vh]">
+      <PrincipalViews />
+    </div>
+  );
 };
 
 export default PublicLayout;
