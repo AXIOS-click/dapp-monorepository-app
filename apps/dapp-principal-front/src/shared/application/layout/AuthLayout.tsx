@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { ViewContainer } from "../components/View/ViewContainer";
+import { PrincipalViews } from "../components/view/PrincipalView";
 
 interface ViewsProps {
   pageContainerType?: "default" | "gutterless" | "contained";
@@ -8,7 +8,7 @@ interface ViewsProps {
 const AuthLayout: FC<ViewsProps> = () => {
   return (
     <div className="flex flex-auto flex-col h-[100vh]">
-      <ViewContainer />
+      <PrincipalViews />
     </div>
   );
 };
