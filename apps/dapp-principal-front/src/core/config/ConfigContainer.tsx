@@ -1,3 +1,4 @@
+import { Theme } from "@radix-ui/themes";
 import React, { FC } from "react";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -20,8 +21,10 @@ function makeQueryClient() {
 export const ConfigContainer: FC<ConfigContainerProps> = ({ children }) => {
   const queryClient = makeQueryClient();
   return (
-    <QueryClientProvider client={queryClient}>
-      <BrowserRouter>{children}</BrowserRouter>
-    </QueryClientProvider>
+    <Theme>
+      <QueryClientProvider client={queryClient}>
+        <BrowserRouter>{children}</BrowserRouter>
+      </QueryClientProvider>
+    </Theme>
   );
 };

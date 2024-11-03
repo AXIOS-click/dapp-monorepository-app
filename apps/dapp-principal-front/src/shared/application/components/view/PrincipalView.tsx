@@ -8,6 +8,7 @@ import { ProtectedRoute } from "@/shared/infrastructure/route/ProtectedRoute";
 import PublicRoute from "@/shared/infrastructure/route/PublicRoute";
 import { Suspense } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
+import AppSidebar from "../../layout/SideBar";
 
 const { authenticatedEntryPath } = appConfig;
 
@@ -30,7 +31,9 @@ const AllRoutes = () => {
                 userAuthority={userSession?.roles}
                 authority={route.authority}
               >
-                <AppRoute routeKey={route.key} component={route.component} />
+                <AppSidebar>
+                  <AppRoute routeKey={route.key} component={route.component} />
+                </AppSidebar>
               </AuthorityGuard>
             }
           />

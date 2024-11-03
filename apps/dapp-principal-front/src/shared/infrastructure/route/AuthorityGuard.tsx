@@ -11,8 +11,6 @@ const AuthorityGuard = (props: AuthorityGuardProps) => {
   const { allRoles } = RolesStore();
   const { userAuthority = [], authority = [], children } = props;
 
-  console.log("allRoles", allRoles);
-
   const roleMatched = userAuthority.some((userRole) => {
     const role = allRoles?.find((role) => role.name === userRole);
     if (!role) return false;
