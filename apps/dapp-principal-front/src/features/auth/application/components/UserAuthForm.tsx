@@ -34,7 +34,10 @@ const formSchema = z.object({
     }),
 });
 
-export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
+export function UserAuthForm({
+  className,
+  ...props
+}: Readonly<UserAuthFormProps>) {
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
