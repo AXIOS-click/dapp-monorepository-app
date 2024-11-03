@@ -7,7 +7,7 @@ export const navigationConfig: NavigationTree[] = [
     path: "/home",
     title: "Dashboard",
     translateKey: "nav.home",
-    icon: "home",
+    icon: "dashboard",
     type: NAV_ITEM_TYPE_ITEM,
     authority: ["DASHBOARD"],
     subMenu: [],

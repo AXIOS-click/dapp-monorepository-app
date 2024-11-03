@@ -1,6 +1,10 @@
 import { lazy } from "react";
 
-export type authority = "DASHBOARD" | "USUARIOS" | "REPORTERÍA";
+export type authority =
+  | "DASHBOARD"
+  | "USUARIOS"
+  | "REPORTERÍA"
+  | "CONFIGURACIÓN";
 
 export interface Route {
   key: string;

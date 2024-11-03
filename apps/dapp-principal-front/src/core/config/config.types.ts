@@ -1,4 +1,5 @@
 import { authority } from "@/infrastructure/route/protectedRoutes";
+import { Icons } from "./Icons";
 
 export interface NavigationTree {
   key: string;
@@ -6,7 +7,7 @@ export interface NavigationTree {
   isExternalLink?: boolean;
   title: string;
   translateKey: string;
-  icon: string;
+  icon: keyof typeof Icons;
   type: "title" | "collapse" | "item";
   authority: authority[];
   subMenu: NavigationTree[];
