@@ -1,11 +1,15 @@
 import { AuthStore } from "@/features/auth/application/stores/AuthStore";
 import { useMutation } from "@tanstack/react-query";
-import { login, LoginCredentials } from "../../infrastructure/AuthService";
+import {
+  ILoginResponse,
+  login,
+  LoginCredentials,
+} from "../../infrastructure/AuthService";
 
 export function useLogin() {
   const { setUserSession, toggleSignedUser, setTokenSession } = AuthStore();
 
-  return useMutation({
+  return useMutation<ILoginResponse, unknown, LoginCredentials, unknown>({
     mutationFn: (credentials: LoginCredentials) => login(credentials),
     onSuccess: (data) => {
       setUserSession(data.user);

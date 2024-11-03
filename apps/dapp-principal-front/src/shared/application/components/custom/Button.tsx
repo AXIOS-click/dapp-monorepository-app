@@ -53,6 +53,19 @@ type ButtonProps = ButtonPropsBase &
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, children, ...props }, ref) => {
     const { asChild, ...rest } = props;
+    const classicClassname = React.useMemo(
+      () => ({
+        className: "mr-2 h-4 w-4 animate-spin",
+      }),
+      []
+    );
+    const classicClassnameTwo = React.useMemo(
+      () => ({
+        className: "ml-2 h-4 w-4 animate-spin",
+      }),
+      []
+    );
+
     if (asChild) {
       return (
         <Slot
@@ -82,7 +95,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       >
         {((leftSection && loading) ||
           (!leftSection && !rightSection && loading)) && (
-          <IconContext.Provider className="mr-2 h-4 w-4 animate-spin">
+          <IconContext.Provider value={classicClassname}>
             <LuLoader2 />
           </IconContext.Provider>
         )}
@@ -90,7 +103,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {children}
         {!loading && rightSection && <div className="ml-2">{rightSection}</div>}
         {rightSection && loading && (
-          <IconContext.Provider className="ml-2 h-4 w-4 animate-spin">
+          <IconContext.Provider value={classicClassnameTwo}>
             <LuLoader2 />
           </IconContext.Provider>
         )}

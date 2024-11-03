@@ -11,9 +11,10 @@ import {
 import { Input } from "@/shared/application/components/ui/input";
 import { cn } from "@/shared/application/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { HTMLAttributes, useState } from "react";
+import { HTMLAttributes, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useLogin } from "../hooks/useLogin";
 
 interface UserAuthFormProps extends HTMLAttributes<HTMLDivElement> {
   nonImplemented?: boolean;
@@ -39,6 +40,7 @@ export function UserAuthForm({
   ...props
 }: Readonly<UserAuthFormProps>) {
   const [isLoading, setIsLoading] = useState(false);
+  const { mutate, status } = useLogin();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -48,14 +50,13 @@ export function UserAuthForm({
     },
   });
 
-  function onSubmit(data: z.infer<typeof formSchema>) {
-    setIsLoading(true);
-    console.log(data);
+  useEffect(() => {
+    setIsLoading(status === "pending");
+  }, [status]);
 
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 3000);
-  }
+  const onSubmit = (data: z.infer<typeof formSchema>) => {
+    mutate(data);
+  };
 
   return (
     <div className={cn("grid gap-6", className)} {...props}>
