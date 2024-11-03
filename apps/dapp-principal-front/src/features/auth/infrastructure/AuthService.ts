@@ -1,4 +1,3 @@
-import { IUserBase } from "@/features/users/domain/entities/User";
 import BaseService from "@/shared/infrastructure/services/BaseService";
 
 export interface LoginCredentials {
@@ -7,8 +6,7 @@ export interface LoginCredentials {
 }
 
 export interface ILoginResponse {
-  user: IUserBase;
-  token: string;
+  access_token: string;
 }
 
 export async function login(

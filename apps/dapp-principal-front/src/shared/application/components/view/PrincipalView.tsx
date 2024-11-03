@@ -1,7 +1,9 @@
 import { appConfig } from "@/core/config/app.config";
+import { AuthStore } from "@/features/auth/application/stores/AuthStore";
 import { protectedRoutes } from "@/infrastructure/route/protectedRoutes";
 import { publicRoutes } from "@/infrastructure/route/publicRoutes";
 import AppRoute from "@/shared/infrastructure/route/AppRoute";
+import AuthorityGuard from "@/shared/infrastructure/route/AuthorityGuard";
 import { ProtectedRoute } from "@/shared/infrastructure/route/ProtectedRoute";
 import PublicRoute from "@/shared/infrastructure/route/PublicRoute";
 import { Suspense } from "react";
@@ -10,6 +12,8 @@ import { Navigate, Route, Routes } from "react-router-dom";
 const { authenticatedEntryPath } = appConfig;
 
 const AllRoutes = () => {
+  const { userSession } = AuthStore();
+
   return (
     <Routes>
       <Route path="/" element={<ProtectedRoute />}>
@@ -17,15 +21,17 @@ const AllRoutes = () => {
           path="/"
           element={<Navigate replace to={authenticatedEntryPath} />}
         />
-        {/*
-          Aqui aun me falta el guard
-        */}
         {protectedRoutes.map((route) => (
           <Route
             key={route.path}
             path={route.path}
             element={
-              <AppRoute routeKey={route.key} component={route.component} />
+              <AuthorityGuard
+                userAuthority={userSession?.roles}
+                authority={route.authority}
+              >
+                <AppRoute routeKey={route.key} component={route.component} />
+              </AuthorityGuard>
             }
           />
         ))}

@@ -13,7 +13,7 @@ interface State {
 }
 
 const initialState: State = {
-  [RolesStoreProps.AllRoles]: null,
+  [RolesStoreProps.AllRoles]: [],
 };
 
 interface StoredActions extends State {
