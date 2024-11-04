@@ -1,3 +1,4 @@
+import { DataCoreStore } from "@/features/data-core/application/stores/DataCoreStore";
 import { MessagesTable } from "./MessagesTable";
 
 import { Button } from "@/shared/application/components/ui/button";
@@ -29,6 +30,7 @@ import { CalendarIcon } from "lucide-react";
 import { useState } from "react";
 
 export const TabAnalytics = () => {
+  const { allConfigSchematics } = DataCoreStore();
   const startDate = new Date();
   startDate.setMonth(new Date().getMonth() - 1);
 
@@ -71,9 +73,9 @@ export const TabAnalytics = () => {
           <Tabs defaultValue="dates" className="w-full">
             <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="dates">Fechas</TabsTrigger>
-              {/* <TabsTrigger value="company">Compañía</TabsTrigger>
+              <TabsTrigger value="company">Compañía</TabsTrigger>
               <TabsTrigger value="machine">Máquina</TabsTrigger>
-              <TabsTrigger value="other">Otros</TabsTrigger> */}
+              <TabsTrigger value="other">Otros</TabsTrigger>
             </TabsList>
             <TabsContent value="dates" className="space-y-4 mt-4">
               <div className="grid grid-cols-2 gap-4">
@@ -151,25 +153,47 @@ export const TabAnalytics = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="companyCodeId">Código de Compañía</Label>
-                  <Input
-                    id="companyCodeId"
+                  <Select
                     value={queryParams.companyCodeId}
-                    onChange={(e) =>
-                      handleInputChange("companyCodeId", e.target.value)
+                    onValueChange={(value) =>
+                      handleInputChange("companyCodeId", value)
                     }
-                  />
+                  >
+                    <SelectTrigger id="companyCodeId">
+                      <SelectValue placeholder="Selecciona una compañía" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {allConfigSchematics?.companyCodes.map((company) => (
+                        <SelectItem key={company.id} value={company.id}>
+                          {company.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="subCompanyCodeId">
                     Código de Subcompañía
                   </Label>
-                  <Input
-                    id="subCompanyCodeId"
+                  <Select
                     value={queryParams.subCompanyCodeId}
-                    onChange={(e) =>
-                      handleInputChange("subCompanyCodeId", e.target.value)
+                    onValueChange={(value) =>
+                      handleInputChange("subCompanyCodeId", value)
                     }
-                  />
+                  >
+                    <SelectTrigger id="subCompanyCodeId">
+                      <SelectValue placeholder="Selecciona una subcompañía" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {allConfigSchematics?.subCompanyCodes.map(
+                        (subCompany) => (
+                          <SelectItem key={subCompany.id} value={subCompany.id}>
+                            {subCompany.name}
+                          </SelectItem>
+                        )
+                      )}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
             </TabsContent>
@@ -177,56 +201,106 @@ export const TabAnalytics = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="machineId">ID de Máquina</Label>
-                  <Input
-                    id="machineId"
+                  <Select
                     value={queryParams.machineId}
-                    onChange={(e) =>
-                      handleInputChange("machineId", e.target.value)
+                    onValueChange={(value) =>
+                      handleInputChange("machineId", value)
                     }
-                  />
+                  >
+                    <SelectTrigger id="machineId">
+                      <SelectValue placeholder="Selecciona una máquina" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {allConfigSchematics?.machineIds.map((machine) => (
+                        <SelectItem key={machine.id} value={machine.id}>
+                          {machine.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="areaId">ID de Área</Label>
-                  <Input
-                    id="areaId"
+                  <Select
                     value={queryParams.areaId}
-                    onChange={(e) =>
-                      handleInputChange("areaId", e.target.value)
+                    onValueChange={(value) =>
+                      handleInputChange("areaId", value)
                     }
-                  />
+                  >
+                    <SelectTrigger id="areaId">
+                      <SelectValue placeholder="Selecciona un área" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {allConfigSchematics?.areas.map((area) => (
+                        <SelectItem key={area.id} value={area.id}>
+                          {area.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="plcId">ID de PLC</Label>
-                  <Input
-                    id="plcId"
+                  <Select
                     value={queryParams.plcId}
-                    onChange={(e) => handleInputChange("plcId", e.target.value)}
-                  />
+                    onValueChange={(value) => handleInputChange("plcId", value)}
+                  >
+                    <SelectTrigger id="plcId">
+                      <SelectValue placeholder="Selecciona un PLC" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {allConfigSchematics?.plcs.map((plc) => (
+                        <SelectItem key={plc.id} value={plc.id}>
+                          {plc.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="lineaId">ID de Línea</Label>
-                  <Input
-                    id="lineaId"
+                  <Select
                     value={queryParams.lineaId}
-                    onChange={(e) =>
-                      handleInputChange("lineaId", e.target.value)
+                    onValueChange={(value) =>
+                      handleInputChange("lineaId", value)
                     }
-                  />
+                  >
+                    <SelectTrigger id="lineaId">
+                      <SelectValue placeholder="Selecciona una línea" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {allConfigSchematics?.lineas.map((linea) => (
+                        <SelectItem key={linea.id} value={linea.id}>
+                          {linea.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
             </TabsContent>
             <TabsContent value="other" className="space-y-4 mt-4">
               <div className="space-y-2">
                 <Label htmlFor="eventoId">ID de Evento</Label>
-                <Input
-                  id="eventoId"
+                <Select
                   value={queryParams.eventoId}
-                  onChange={(e) =>
-                    handleInputChange("eventoId", e.target.value)
+                  onValueChange={(value) =>
+                    handleInputChange("eventoId", value)
                   }
-                />
+                >
+                  <SelectTrigger id="eventoId">
+                    <SelectValue placeholder="Selecciona un evento" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {allConfigSchematics?.eventos.map((evento) => (
+                      <SelectItem key={evento.id} value={evento.id}>
+                        {evento.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">

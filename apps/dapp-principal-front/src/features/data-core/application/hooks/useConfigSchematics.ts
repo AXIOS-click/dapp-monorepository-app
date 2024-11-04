@@ -6,7 +6,7 @@ import { getConfigSchematics } from "../../infrastructure/DataCore.service";
 import { DataCoreStore } from "../stores/DataCoreStore";
 
 export function useConfigSchematics() {
-  const { setConfigSchematics } = DataCoreStore();
+  const { setConfigSchematics, allConfigSchematics } = DataCoreStore();
   const schematicsGetted = useQuery<IDataCore>({
     queryKey: ["configChematics"],
     queryFn: getConfigSchematics,
@@ -19,4 +19,6 @@ export function useConfigSchematics() {
       setConfigSchematics(schematicsGetted.data);
     }
   }, [schematicsGetted.isSuccess, schematicsGetted.data, setConfigSchematics]);
+
+  return allConfigSchematics;
 }

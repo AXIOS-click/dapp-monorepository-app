@@ -73,7 +73,7 @@ export function MessagesTable({
           <TableHead>PLC</TableHead>
           <TableHead>Line</TableHead>
           {variableHeaders.map((variableName, i) => (
-            <TableHead key={`${variableName}-${i}`} className="bg-gray-400">
+            <TableHead key={`${variableName}-${i}`} className="bg-gray-200">
               {variableName ?? ""}
             </TableHead>
           ))}
@@ -101,7 +101,7 @@ export function MessagesTable({
                 (v) => v.name === variableName
               );
               return (
-                <TableCell key={`${variableName}-${i}`}>
+                <TableCell key={`${variableName}-${i}`} className="bg-gray-100">
                   {variable ? variable.value : "-"}
                 </TableCell>
               );
@@ -130,7 +130,7 @@ export function MessagesTable({
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="5">5</SelectItem>
-                    <SelectItem value="10">10</SelectItem>
+                    <SelectItem value="15">15</SelectItem>
                     <SelectItem value="20">20</SelectItem>
                     <SelectItem value={data?.totalRecords.toString() ?? "50"}>
                       All
