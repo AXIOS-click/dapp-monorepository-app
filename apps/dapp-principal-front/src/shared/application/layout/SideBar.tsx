@@ -34,7 +34,7 @@ export default function AppSidebar({
   children: React.ReactNode;
 }>) {
   const company = {
-    name: "Acme Inc",
+    name: "Dapp",
     logo: GalleryVerticalEnd,
     plan: "Enterprise",
   };

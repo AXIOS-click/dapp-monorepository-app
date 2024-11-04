@@ -4,14 +4,22 @@ import { PrismaService } from './prisma.service';
 @Injectable()
 export class MessageRepositoryImpl {
   constructor(private readonly prisma: PrismaService) {}
-  async findMessages(filters: any, page: number, limit: number) {
-    const skip = (page - 1) * limit;
+  async findMessages(filters: any, page: number, limit: number | string) {
+    // validar si limit es o no numero y si no lo es convertirlo a numero
+    let convertedLimit;
 
+    if (typeof limit === 'string') {
+      convertedLimit = parseInt(limit, 10);
+    } else {
+      convertedLimit = limit;
+    }
+
+    const skip = (page - 1) * convertedLimit;
     // Consulta principal con filtros y paginación
     const messages = await this.prisma.message.findMany({
       where: filters,
       skip,
-      take: limit,
+      take: convertedLimit,
       orderBy: {
         timestamp: 'desc', // Orden descendente por timestamp
       },
@@ -34,7 +42,7 @@ export class MessageRepositoryImpl {
     return {
       data: messages,
       totalRecords,
-      totalPages: Math.ceil(totalRecords / limit),
+      totalPages: Math.ceil(totalRecords / convertedLimit),
       currentPage: page,
     };
   }
