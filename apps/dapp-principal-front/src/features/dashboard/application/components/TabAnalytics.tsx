@@ -262,12 +262,12 @@ export const TabAnalytics = () => {
               </div>
             </TabsContent>
           </Tabs>
-          <Button
+          {/* <Button
             className="w-full mt-4"
             onClick={() => setQueryParams({ ...queryParams })} // Realizar consulta al cambiar queryParams
           >
             Consultar Mensajes
-          </Button>
+          </Button> */}
         </CardContent>
       </Card>
 

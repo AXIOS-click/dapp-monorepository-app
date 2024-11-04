@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { FontCoreModule } from './modules/font-core/infrastructure/font-core.module';
 import { MessagesModule } from './modules/messages/messages.module';
-import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -11,6 +12,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       envFilePath: '.env',
     }),
     MessagesModule,
+    FontCoreModule,
   ],
   controllers: [AppController],
   providers: [AppService],
