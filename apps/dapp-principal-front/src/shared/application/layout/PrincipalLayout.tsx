@@ -1,4 +1,5 @@
 import { AuthStore } from "@/features/auth/application/stores/AuthStore";
+import { useConfigSchematics } from "@/features/data-core/application/hooks/useConfigSchematics";
 import { useRoles } from "@/features/roles/application/hooks/useGetRoles";
 import { FC, lazy, Suspense, useMemo } from "react";
 
@@ -11,6 +12,7 @@ export const PrincipalLayout: FC = () => {
   const { signedUser: authenticated } = AuthStore();
 
   useRoles();
+  useConfigSchematics();
 
   const AppLayout = useMemo(() => {
     return authenticated ? layouts.AuthenticatedLayout : layouts.PublicLayout;
