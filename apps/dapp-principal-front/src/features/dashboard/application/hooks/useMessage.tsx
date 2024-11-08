@@ -22,7 +22,6 @@ export function useMessages(queryParams: QueryParams) {
   const messagesQuery = useQuery<IMessageResponse>({
     queryKey: ["messages", queryParams],
     queryFn: () => getMessages(queryParams),
-    staleTime: 1000 * 60 * 5,
     retry: 2,
   });
 

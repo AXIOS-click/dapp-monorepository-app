@@ -4,7 +4,6 @@ import { MessagesTable } from "./MessagesTable";
 import { Button } from "@/shared/application/components/ui/button";
 import { Calendar } from "@/shared/application/components/ui/calendar";
 import { Card, CardContent } from "@/shared/application/components/ui/card";
-import { Input } from "@/shared/application/components/ui/input";
 import { Label } from "@/shared/application/components/ui/label";
 import {
   Popover,
@@ -46,7 +45,7 @@ export const TabAnalytics = () => {
     lineaId: "",
     eventoId: "",
     page: 1,
-    limit: 10,
+    limit: 15,
   });
 
   const handleInputChange = (
@@ -73,7 +72,6 @@ export const TabAnalytics = () => {
           <Tabs defaultValue="dates" className="w-full">
             <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="dates">Fechas</TabsTrigger>
-              <TabsTrigger value="company">Compañía</TabsTrigger>
               <TabsTrigger value="machine">Máquina</TabsTrigger>
               <TabsTrigger value="other">Otros</TabsTrigger>
             </TabsList>
@@ -149,54 +147,6 @@ export const TabAnalytics = () => {
                 </div>
               </div>
             </TabsContent>
-            <TabsContent value="company" className="space-y-4 mt-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="companyCodeId">Código de Compañía</Label>
-                  <Select
-                    value={queryParams.companyCodeId}
-                    onValueChange={(value) =>
-                      handleInputChange("companyCodeId", value)
-                    }
-                  >
-                    <SelectTrigger id="companyCodeId">
-                      <SelectValue placeholder="Selecciona una compañía" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {allConfigSchematics?.companyCodes.map((company) => (
-                        <SelectItem key={company.id} value={company.id}>
-                          {company.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="subCompanyCodeId">
-                    Código de Subcompañía
-                  </Label>
-                  <Select
-                    value={queryParams.subCompanyCodeId}
-                    onValueChange={(value) =>
-                      handleInputChange("subCompanyCodeId", value)
-                    }
-                  >
-                    <SelectTrigger id="subCompanyCodeId">
-                      <SelectValue placeholder="Selecciona una subcompañía" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {allConfigSchematics?.subCompanyCodes.map(
-                        (subCompany) => (
-                          <SelectItem key={subCompany.id} value={subCompany.id}>
-                            {subCompany.name}
-                          </SelectItem>
-                        )
-                      )}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </TabsContent>
             <TabsContent value="machine" className="space-y-4 mt-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
@@ -241,7 +191,7 @@ export const TabAnalytics = () => {
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
+                {/* <div className="space-y-2">
                   <Label htmlFor="plcId">ID de PLC</Label>
                   <Select
                     value={queryParams.plcId}
@@ -258,7 +208,7 @@ export const TabAnalytics = () => {
                       ))}
                     </SelectContent>
                   </Select>
-                </div>
+                </div> */}
                 <div className="space-y-2">
                   <Label htmlFor="lineaId">ID de Línea</Label>
                   <Select
@@ -301,38 +251,6 @@ export const TabAnalytics = () => {
                     ))}
                   </SelectContent>
                 </Select>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="page">Página</Label>
-                  <Input
-                    id="page"
-                    type="number"
-                    value={queryParams.page}
-                    onChange={(e) =>
-                      handleInputChange("page", parseInt(e.target.value))
-                    }
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="limit">Límite</Label>
-                  <Select
-                    value={queryParams.limit.toString()}
-                    onValueChange={(value) =>
-                      handleInputChange("limit", parseInt(value))
-                    }
-                  >
-                    <SelectTrigger id="limit">
-                      <SelectValue placeholder="Selecciona un límite" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="10">10</SelectItem>
-                      <SelectItem value="20">20</SelectItem>
-                      <SelectItem value="50">50</SelectItem>
-                      <SelectItem value="100">100</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
               </div>
             </TabsContent>
           </Tabs>

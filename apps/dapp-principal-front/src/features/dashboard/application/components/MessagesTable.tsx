@@ -23,7 +23,7 @@ export function MessagesTable({
   startDate,
   endDate,
   page = 1,
-  limit = 10,
+  limit = 15,
   onPageChange,
   onLimitChange,
   ...rest
@@ -64,16 +64,9 @@ export function MessagesTable({
       <TableHeader className="bg-gray-100">
         <TableRow>
           <TableHead>#</TableHead>
-          <TableHead>Timestamp</TableHead>
-          <TableHead>Event</TableHead>
-          <TableHead>Company</TableHead>
-          <TableHead>SubCompany</TableHead>
-          <TableHead>Machine</TableHead>
-          <TableHead>Area</TableHead>
-          <TableHead>PLC</TableHead>
-          <TableHead>Line</TableHead>
+          <TableHead className="w-48 min-w-48">Timestamp</TableHead>
           {variableHeaders.map((variableName, i) => (
-            <TableHead key={`${variableName}-${i}`} className="bg-gray-200">
+            <TableHead key={`${variableName}-${i}`}>
               {variableName ?? ""}
             </TableHead>
           ))}
@@ -86,22 +79,15 @@ export function MessagesTable({
             className="hover:bg-gray-50"
           >
             <TableCell>{index + 1}</TableCell>
-            <TableCell>
-              {format(new Date(message.timestamp), "dd/MM/yyyy HH:mm")}
+            <TableCell className="w-48 min-w-48">
+              {format(new Date(message.timestamp), "dd/MM/yyyy HH:mm:ss a")}
             </TableCell>
-            <TableCell>{message.evento.name}</TableCell>
-            <TableCell>{message.company.name}</TableCell>
-            <TableCell>{message.subCompany.name}</TableCell>
-            <TableCell>{message.machine.name}</TableCell>
-            <TableCell>{message.area.name}</TableCell>
-            <TableCell>{message.plc.name}</TableCell>
-            <TableCell>{message.linea.name}</TableCell>
             {variableHeaders.map((variableName, i) => {
               const variable = message.variables.find(
                 (v) => v.name === variableName
               );
               return (
-                <TableCell key={`${variableName}-${i}`} className="bg-gray-100">
+                <TableCell key={`${variableName}-${i}`}>
                   {variable ? variable.value : "-"}
                 </TableCell>
               );
