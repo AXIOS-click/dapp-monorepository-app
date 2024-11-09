@@ -26,9 +26,10 @@ import {
 import { cn } from "@/shared/application/lib/utils";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export const TabAnalytics = () => {
+  const [isFormComplete, setIsFormComplete] = useState(false);
   const { allConfigSchematics } = DataCoreStore();
   const startDate = new Date();
   startDate.setMonth(new Date().getMonth() - 1);
@@ -64,6 +65,20 @@ export const TabAnalytics = () => {
     setQueryParams((prev) => ({ ...prev, limit: newLimit, page: 1 })); // Reset page to 1 when limit changes
   };
 
+  useEffect(() => {
+    const { startDate, endDate, machineId, areaId, lineaId, eventoId } =
+      queryParams;
+    const complete =
+      Boolean(startDate) &&
+      Boolean(endDate) &&
+      Boolean(machineId) &&
+      Boolean(areaId) &&
+      Boolean(lineaId) &&
+      Boolean(eventoId);
+
+    setIsFormComplete(complete);
+  }, [queryParams]);
+
   return (
     <div className="container mx-auto">
       <Card className="lg:sticky lg:top-4 lg:self-start">
@@ -71,9 +86,26 @@ export const TabAnalytics = () => {
           <h2 className="text-2xl font-bold mb-4">Filtros</h2>
           <Tabs defaultValue="dates" className="w-full">
             <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="dates">Fechas</TabsTrigger>
-              <TabsTrigger value="machine">Máquina</TabsTrigger>
-              <TabsTrigger value="other">Otros</TabsTrigger>
+              <TabsTrigger value="dates">
+                Fechas{" "}
+                {!queryParams.startDate || !queryParams.endDate ? (
+                  <span className="text-red-500">*</span>
+                ) : null}
+              </TabsTrigger>
+              <TabsTrigger value="machine">
+                Máquina{" "}
+                {!queryParams.machineId ||
+                !queryParams.areaId ||
+                !queryParams.lineaId ? (
+                  <span className="text-red-500">*</span>
+                ) : null}
+              </TabsTrigger>
+              <TabsTrigger value="other">
+                Otros{" "}
+                {!queryParams.lineaId || !queryParams.eventoId ? (
+                  <span className="text-red-500">*</span>
+                ) : null}
+              </TabsTrigger>
             </TabsList>
             <TabsContent value="dates" className="space-y-4 mt-4">
               <div className="grid grid-cols-2 gap-4">
@@ -256,6 +288,7 @@ export const TabAnalytics = () => {
           </Tabs>
           {/* <Button
             className="w-full mt-4"
+            disabled={!isFormComplete}
             onClick={() => setQueryParams({ ...queryParams })} // Realizar consulta al cambiar queryParams
           >
             Consultar Mensajes
@@ -265,21 +298,23 @@ export const TabAnalytics = () => {
 
       <Card className="mt-4">
         <CardContent className="p-4">
-          <MessagesTable
-            startDate={queryParams.startDate}
-            endDate={queryParams.endDate}
-            companyCodeId={queryParams.companyCodeId}
-            subCompanyCodeId={queryParams.subCompanyCodeId}
-            machineId={queryParams.machineId}
-            areaId={queryParams.areaId}
-            plcId={queryParams.plcId}
-            lineaId={queryParams.lineaId}
-            eventoId={queryParams.eventoId}
-            page={queryParams.page}
-            limit={queryParams.limit}
-            onPageChange={handlePageChange}
-            onLimitChange={handleLimitChange}
-          />
+          {isFormComplete && (
+            <MessagesTable
+              startDate={queryParams.startDate}
+              endDate={queryParams.endDate}
+              companyCodeId={queryParams.companyCodeId}
+              subCompanyCodeId={queryParams.subCompanyCodeId}
+              machineId={queryParams.machineId}
+              areaId={queryParams.areaId}
+              plcId={queryParams.plcId}
+              lineaId={queryParams.lineaId}
+              eventoId={queryParams.eventoId}
+              page={queryParams.page}
+              limit={queryParams.limit}
+              onPageChange={handlePageChange}
+              onLimitChange={handleLimitChange}
+            />
+          )}
         </CardContent>
       </Card>
     </div>

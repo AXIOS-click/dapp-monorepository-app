@@ -12,4 +12,25 @@ export const navigationConfig: NavigationTree[] = [
     authority: ["DASHBOARD"],
     subMenu: [],
   },
+  {
+    key: "home",
+    path: "/home",
+    title: "Administración",
+    translateKey: "nav.home",
+    icon: "user",
+    type: NAV_ITEM_TYPE_ITEM,
+    authority: ["USUARIOS"],
+    subMenu: [
+      {
+        key: "home",
+        path: "/home",
+        title: "",
+        translateKey: "nav.home",
+        icon: "user",
+        type: NAV_ITEM_TYPE_ITEM,
+        authority: ["USUARIOS"],
+        subMenu: [],
+      },
+    ],
+  },
 ];

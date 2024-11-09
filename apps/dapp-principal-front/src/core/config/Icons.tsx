@@ -1,6 +1,7 @@
 import {
   AlertTriangle,
   ArrowRight,
+  Bolt,
   Check,
   ChevronLeft,
   ChevronRight,
@@ -64,6 +65,7 @@ export const Icons = {
   sun: SunMedium,
   moon: Moon,
   laptop: Laptop,
+  bolt: Bolt,
   gitHub: ({ ...props }: LucideProps) => (
     <svg
       aria-hidden="true"
