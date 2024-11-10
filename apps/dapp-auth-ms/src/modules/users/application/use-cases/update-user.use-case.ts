@@ -1,8 +1,9 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
 import { UserRepositoryType } from '../../domain/repositories/user-repository.types';
 import { UserRepository } from '../../domain/repositories/user.repository.interface';
 import { UpdateUserDto } from '../../infrastructure/dto/update-user.dto';
+import { UserNotFoundException } from '../exceptions/UserNotFoundException';
 
 @Injectable()
 export class UpdateUserUseCase {
@@ -14,7 +15,7 @@ export class UpdateUserUseCase {
   async execute(id: string, data: UpdateUserDto) {
     const user = await this.userRepository.findById(id);
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new UserNotFoundException();
     }
     if (data.password) {
       data.password = await bcrypt.hash(user.password, 10);
