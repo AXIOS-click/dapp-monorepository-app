@@ -22,9 +22,19 @@ export const navigationConfig: NavigationTree[] = [
     authority: ["USUARIOS"],
     subMenu: [
       {
-        key: "home",
-        path: "/home",
-        title: "",
+        key: "users",
+        path: "/administrative/users",
+        title: "Usuarios",
+        translateKey: "nav.home",
+        icon: "user",
+        type: NAV_ITEM_TYPE_ITEM,
+        authority: ["USUARIOS"],
+        subMenu: [],
+      },
+      {
+        key: "roles",
+        path: "/administrative/roles",
+        title: "Roles",
         translateKey: "nav.home",
         icon: "user",
         type: NAV_ITEM_TYPE_ITEM,

@@ -24,4 +24,20 @@ export const protectedRoutes: Route[] = [
     ),
     authority: ["DASHBOARD"],
   },
+  {
+    key: "home",
+    path: "/administrative/users",
+    component: lazy(
+      () => import("@/features/users/application/pages/UsersAdministration")
+    ),
+    authority: ["DASHBOARD"],
+  },
+  {
+    key: "home",
+    path: "/administrative/roles",
+    component: lazy(
+      () => import("@/features/roles/application/pages/RolesAdministration")
+    ),
+    authority: ["DASHBOARD"],
+  },
 ];
