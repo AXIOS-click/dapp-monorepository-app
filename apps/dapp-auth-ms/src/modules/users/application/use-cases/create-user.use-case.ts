@@ -2,6 +2,7 @@ import { Inject } from '@nestjs/common';
 import { User } from '../../domain/aggregates/user.aggregate';
 import { UserRepositoryType } from '../../domain/repositories/user-repository.types';
 import { UserRepository } from '../../domain/repositories/user.repository.interface';
+import { CreateUserDto } from '../../infrastructure/dto/create-user.dto';
 
 export class CreateUserUseCase {
   constructor(
@@ -9,7 +10,7 @@ export class CreateUserUseCase {
     private readonly userRepository: UserRepository,
   ) {}
 
-  async execute(user: User): Promise<User> {
+  async execute(user: CreateUserDto): Promise<User> {
     return await this.userRepository.create(user);
   }
 }
