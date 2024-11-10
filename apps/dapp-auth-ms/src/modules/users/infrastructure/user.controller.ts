@@ -1,6 +1,7 @@
 // users.controller.ts
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { CreateUserUseCase } from '../application/use-cases/create-user.use-case';
+import { DeleteUserUseCase } from '../application/use-cases/delete-user.use-case';
 import { ListUsersUseCase } from '../application/use-cases/list-users.use-case';
 import { CreateUserDto } from './dto/create-user.dto';
 
@@ -9,6 +10,7 @@ export class UsersController {
   constructor(
     private readonly listUsersUseCase: ListUsersUseCase,
     private readonly createUserUseCase: CreateUserUseCase,
+    private readonly deleteUserUseCase: DeleteUserUseCase,
   ) {}
 
   @Post()
@@ -24,5 +26,10 @@ export class UsersController {
   @Get()
   async listUsers() {
     return this.listUsersUseCase.execute();
+  }
+
+  @Delete(':id')
+  async deleteUser(@Param('id') id: string) {
+    return this.deleteUserUseCase.execute(id);
   }
 }

@@ -1,4 +1,5 @@
 import { Inject } from '@nestjs/common';
+import * as bcrypt from 'bcryptjs';
 import { User } from '../../domain/aggregates/user.aggregate';
 import { UserRepositoryType } from '../../domain/repositories/user-repository.types';
 import { UserRepository } from '../../domain/repositories/user.repository.interface';
@@ -11,6 +12,10 @@ export class CreateUserUseCase {
   ) {}
 
   async execute(user: CreateUserDto): Promise<User> {
-    return await this.userRepository.create(user);
+    const hashedPassword = await bcrypt.hash(user.password, 10);
+    return await this.userRepository.create({
+      ...user,
+      password: hashedPassword,
+    });
   }
 }
