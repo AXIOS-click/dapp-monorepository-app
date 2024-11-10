@@ -4,6 +4,7 @@ import { PrismaService } from 'src/shared/prisma/prisma.service';
 import { User } from '../../domain/aggregates/user.aggregate';
 import { UserRepository } from '../../domain/repositories/user.repository.interface';
 import { CreateUserDto } from '../dto/create-user.dto';
+import { UpdateUserDto } from '../dto/update-user.dto';
 
 @Injectable()
 export class PrismaUserRepository implements UserRepository {
@@ -73,24 +74,28 @@ export class PrismaUserRepository implements UserRepository {
     );
   }
 
-  async update(user: User): Promise<User> {
-    const { id, name, lastName, email, password, roles } = user;
-
-    await this.prisma.user.update({
+  async update(id: string, data: UpdateUserDto) {
+    const user = await this.prisma.user.update({
       where: { id },
       data: {
-        name,
-        lastName,
-        email,
-        password,
-        roles: {
-          set: [], // Limpiamos las relaciones existentes
-          connect: roles.map((roleId) => ({ id: roleId })), // Conectamos los nuevos roles
-        },
+        ...data,
+        roles: data.roles
+          ? { set: data.roles.map((roleId) => ({ id: roleId })) }
+          : undefined,
+      },
+      include: {
+        roles: true,
       },
     });
 
-    return user;
+    return new User(
+      user.id,
+      user.name,
+      user.lastName,
+      user.email,
+      user.password,
+      user.roles.map((role) => role.name),
+    );
   }
 
   async delete(userId: string): Promise<void> {
