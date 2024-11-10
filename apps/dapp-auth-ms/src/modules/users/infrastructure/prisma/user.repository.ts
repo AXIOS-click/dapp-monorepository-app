@@ -1,12 +1,30 @@
 import { Injectable } from '@nestjs/common';
 
-import { UserRepository } from '../../domain/repositories/user.repository.interface';
-import { User } from '../../domain/aggregates/user.aggregate';
 import { PrismaService } from 'src/shared/prisma/prisma.service';
+import { User } from '../../domain/aggregates/user.aggregate';
+import { UserRepository } from '../../domain/repositories/user.repository.interface';
 
 @Injectable()
 export class PrismaUserRepository implements UserRepository {
   constructor(private readonly prisma: PrismaService) {}
+
+  async findAll() {
+    const user = await this.prisma.user.findMany({
+      include: { roles: true },
+    });
+    return user.map((user) => {
+      const roleNames = user.roles.map((role) => role.name);
+
+      return new User(
+        user.id,
+        user.name,
+        user.lastName,
+        user.email,
+        user.password,
+        roleNames,
+      );
+    });
+  }
 
   async findByEmail(email: string): Promise<User | null> {
     const user = await this.prisma.user.findUnique({

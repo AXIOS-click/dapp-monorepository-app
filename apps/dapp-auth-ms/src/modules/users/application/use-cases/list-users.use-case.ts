@@ -1,15 +1,15 @@
-import { Inject } from '@nestjs/common';
-import { User } from '../../domain/aggregates/user.aggregate';
+import { Inject, Injectable } from '@nestjs/common';
 import { UserRepositoryType } from '../../domain/repositories/user-repository.types';
 import { UserRepository } from '../../domain/repositories/user.repository.interface';
 
-export class CreateUserUseCase {
+@Injectable()
+export class ListUsersUseCase {
   constructor(
     @Inject(UserRepositoryType.UserRepository)
     private readonly userRepository: UserRepository,
   ) {}
 
-  async execute(user: User): Promise<User> {
-    return await this.userRepository.create(user);
+  async execute() {
+    return await this.userRepository.findAll();
   }
 }
