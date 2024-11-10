@@ -48,6 +48,7 @@ services:
       - "3001:3001"
     depends_on:
       - mongo
+      - jaeger
     networks:
       - dapp_network
 
@@ -62,6 +63,7 @@ services:
       - "3002:3002"
     depends_on:
       - mysql
+      - jaeger
     networks:
       - dapp_network
 
@@ -155,25 +157,20 @@ services:
       - dapp_network
     privileged: true
 
-  mongo-exporter:
-    image: percona/mongodb_exporter:0.42
-    container_name: mongo-exporter
-    restart: always
+  jaeger:
+    image: jaegertracing/all-in-one:latest
     ports:
-      - "9216:9216"
-    command:
-      - "--mongodb.global-conn-pool"
-      - "--collector.diagnosticdata"
-      - "--discovering-mode"
-      - "--compatible-mode"
-      - "--mongodb.collstats-colls=admin.dapp_database"
+      - "6831:6831/udp"
+      - "6832:6832/udp"
+      - "5778:5778"
+      - "16686:16686"
+      - "14268:14268"
+      - "14250:14250"
+      - "9411:9411"
+    environment:
+      - LOG_LEVEL=debug
     networks:
       - dapp_network
-    environment:
-      WAIT_HOSTS: mongo-dapp-container:27017
-      MONGODB_URI: mongodb://dappAdmin:S3cur3P%40ssw0rdM0ng0@mongo-dapp-container:27017/dapp?authSource=admin&directConnection=true
-    depends_on:
-      - mongo
 networks:
   dapp_network:
     driver: bridge
