@@ -5,15 +5,15 @@ import { persist } from "zustand/middleware";
 import { IUserBase } from "../../domain/entities/User";
 
 enum UserStoreProps {
-  AllRoles = "allRoles",
+  AllUsers = "allUsers",
 }
 
 interface State {
-  [UserStoreProps.AllRoles]: IUserBase[] | null;
+  [UserStoreProps.AllUsers]: IUserBase[] | null;
 }
 
 const initialState: State = {
-  [UserStoreProps.AllRoles]: [],
+  [UserStoreProps.AllUsers]: [],
 };
 
 interface StoredActions extends State {
@@ -27,11 +27,11 @@ export const CreateUsersStore = (
   get: Get<StoredActions>
 ) => ({
   ...initialState,
-  setUsers: setValue<IUserBase[]>(UserStoreProps.AllRoles)(set, get),
+  setUsers: setValue<IUserBase[]>(UserStoreProps.AllUsers)(set, get),
 });
 
 const persistedStore = persist(CreateUsersStore, {
-  name: "RolesStore",
+  name: "UsersStore",
 });
 
 export const UsersStore = create(persistedStore);
