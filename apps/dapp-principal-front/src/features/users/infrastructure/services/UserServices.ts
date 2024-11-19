@@ -17,3 +17,14 @@ export async function createUser(
   );
   return response.data;
 }
+
+export async function updateUser(
+  id: string,
+  data: Partial<INewUser>
+): Promise<IUserBase> {
+  const response = await BaseService.put<IUserBase>(
+    `/ms-authorization/users/${id}`,
+    data
+  );
+  return response.data;
+}

@@ -32,6 +32,7 @@ import {
 import { cn } from "@/shared/application/lib/utils";
 import { MoreHorizontal, Pencil, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
+import { IUserBase } from "../../domain/entities/User";
 import { CreateUser } from "../components/CreateUser";
 import { useGetUsers } from "../hooks/useGetUsers";
 import { UsersStore } from "../stores/UsersStore";
@@ -41,35 +42,32 @@ const UsersAdministration = () => {
 
   const { allUsers: filteredUsers } = UsersStore();
   const [isEditMode, setIsEditMode] = useState(false);
-  console.log(isEditMode);
+  const [userToEdit, setUserToEdit] = useState<IUserBase | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [userDialogOpen, setUserDialogOpen] = useState(false);
 
   const handleDelete = (_id: string) => {
     console.log("Deleting user with id: ", _id);
-    // setUsers(users.filter((user) => user.id !== id));
     setDeleteDialogOpen(false);
   };
 
   const openCreateDialog = () => {
-    setSelectedUserId(null);
+    setUserToEdit(null);
     setIsEditMode(false);
     setUserDialogOpen(true);
   };
 
   const openEditDialog = (id: string) => {
-    setSelectedUserId(id);
+    const user = filteredUsers?.find((user) => user.id === id);
+    if (user) setUserToEdit(user);
     setIsEditMode(true);
     setUserDialogOpen(true);
   };
 
-  const openDeleteDialog = (id: string) => {
-    setSelectedUserId(id);
-    setDeleteDialogOpen(true);
-  };
   const handleCloseModal = () => {
     setUserDialogOpen(false);
+    setUserToEdit(null); // Limpiar `userToEdit` al cerrar
   };
 
   return (
@@ -127,7 +125,6 @@ const UsersAdministration = () => {
                       <DropdownMenuItem
                         onSelect={(event) => {
                           event.preventDefault();
-                          openDeleteDialog(user.id);
                         }}
                       >
                         <Trash2 className="mr-2 h-4 w-4" />
@@ -151,7 +148,11 @@ const UsersAdministration = () => {
               </DialogDescription>
             </DialogHeader>
             <div>
-              <CreateUser isEditMode={isEditMode} onClose={handleCloseModal} />
+              <CreateUser
+                isEditMode={isEditMode}
+                userToEdit={userToEdit}
+                onClose={handleCloseModal}
+              />
             </div>
           </DialogContent>
         </Dialog>

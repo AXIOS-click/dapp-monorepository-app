@@ -22,8 +22,9 @@ import { Controller, useForm } from "react-hook-form";
 import * as z from "zod";
 import { IUserBase } from "../../domain/entities/User";
 import { useCreateUser } from "../hooks/useCreateUser";
+import { useUpdateUser } from "../hooks/useUpdateUser";
 
-const userSchema = z.object({
+const userSchemaCreate = z.object({
   name: z.string().min(1, "El nombre es obligatorio"),
   lastName: z.string().min(1, "El apellido es obligatorio"),
   email: z.string().email("Dirección de correo inválida"),
@@ -31,11 +32,25 @@ const userSchema = z.object({
   roles: z.array(z.string().uuid()).min(1, "Debe seleccionar al menos un rol"),
 });
 
-type UserFormData = z.infer<typeof userSchema>;
+const userSchemaEdit = userSchemaCreate.extend({
+  name: z.string().min(1, "El nombre es obligatorio").optional(),
+  lastName: z.string().min(1, "El apellido es obligatorio").optional(),
+  email: z.string().email("Dirección de correo inválida").optional(),
+  password: z
+    .string()
+    .min(8, "La contraseña debe tener al menos 8 caracteres")
+    .optional(),
+  roles: z
+    .array(z.string().uuid())
+    .min(1, "Debe seleccionar al menos un rol")
+    .optional(),
+});
+
+type UserFormData = z.infer<typeof userSchemaCreate>;
 
 interface CreateUserProps {
   isEditMode?: boolean;
-  userToEdit?: IUserBase;
+  userToEdit?: IUserBase | null;
   onClose?: () => void;
 }
 
@@ -46,35 +61,55 @@ export const CreateUser: FC<CreateUserProps> = ({
 }) => {
   const { allRoles } = RolesStore();
   const { mutate: createUser } = useCreateUser();
+  const { mutate: updateUser } = useUpdateUser();
+
   const {
     register,
     handleSubmit,
     setValue,
     control,
     formState: { errors },
+    getValues,
   } = useForm<UserFormData>({
-    resolver: zodResolver(userSchema),
+    resolver: zodResolver(isEditMode ? userSchemaEdit : userSchemaCreate),
   });
 
   useEffect(() => {
     if (isEditMode && userToEdit) {
       const { name, lastName, email, roles } = userToEdit;
-      // setValue("name", name);
-      // setValue("lastName", lastName);
-      // setValue("email", email);
-      // setValue("roles", roles);
+      const roleIds = roles
+        .map((roleName) => allRoles?.find((role) => role.name === roleName)?.id)
+        .filter((id): id is string => Boolean(id));
+      setValue("name", name);
+      setValue("lastName", lastName);
+      setValue("email", email);
+      setValue("roles", roleIds);
     }
   }, [isEditMode, userToEdit, setValue]);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const onSubmit = async (data: UserFormData) => {
-    createUser(data, {
-      onSuccess: () => {
-        alert("Usuario creado exitosamente");
-        if (onClose) onClose(); // Cierra el formulario tras creación exitosa
-      },
-    });
+    setIsSubmitting(true);
+    if (isEditMode && userToEdit?.id) {
+      updateUser(
+        { id: userToEdit.id, data },
+        {
+          onSuccess: () => {
+            alert("Usuario actualizado exitosamente");
+            if (onClose) onClose();
+          },
+        }
+      );
+    } else {
+      createUser(data, {
+        onSuccess: () => {
+          alert("Usuario creado exitosamente");
+          if (onClose) onClose();
+        },
+      });
+    }
+    setIsSubmitting(false);
   };
   const buttonText = isEditMode ? "Guardar Cambios" : "Crear Usuario";
 
@@ -113,18 +148,22 @@ export const CreateUser: FC<CreateUserProps> = ({
         )}
       </div>
 
-      <div>
-        <Label htmlFor="password">Contraseña</Label>
-        <Input
-          id="password"
-          type="password"
-          {...register("password")}
-          autoComplete="off"
-        />
-        {errors.password && (
-          <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
-        )}
-      </div>
+      {!isEditMode && (
+        <div>
+          <Label htmlFor="password">Contraseña</Label>
+          <Input
+            id="password"
+            type="password"
+            {...register("password")}
+            autoComplete="off"
+          />
+          {errors.password && (
+            <p className="text-red-500 text-sm mt-1">
+              {errors.password.message}
+            </p>
+          )}
+        </div>
+      )}
 
       <div>
         <Label>Roles</Label>
@@ -161,7 +200,7 @@ export const CreateUser: FC<CreateUserProps> = ({
                         key={role.id}
                         onSelect={() => {
                           const updatedValue = field.value?.includes(role.id)
-                            ? field.value.filter((id) => id !== role.id)
+                            ? field.value.filter((id: string) => id !== role.id)
                             : [...(field.value || []), role.id];
                           field.onChange(updatedValue);
                         }}
@@ -186,7 +225,14 @@ export const CreateUser: FC<CreateUserProps> = ({
         {errors.roles && (
           <p className="text-red-500 text-sm mt-1">{errors.roles.message}</p>
         )}
-        <Button type="submit" disabled={isSubmitting} className="w-full mt-6">
+        <Button
+          type="submit"
+          disabled={isSubmitting}
+          className="w-full mt-6"
+          onClick={() => {
+            onSubmit(getValues());
+          }}
+        >
           {isSubmitting ? "Guardando..." : buttonText}
         </Button>
       </div>
