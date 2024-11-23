@@ -34,6 +34,7 @@ import { MoreHorizontal, Pencil, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { IUserBase } from "../../domain/entities/User";
 import { CreateUser } from "../components/CreateUser";
+import { useDeleteUser } from "../hooks/useDelteUser";
 import { useGetUsers } from "../hooks/useGetUsers";
 import { UsersStore } from "../stores/UsersStore";
 
@@ -46,10 +47,13 @@ const UsersAdministration = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [userDialogOpen, setUserDialogOpen] = useState(false);
+  const { mutate: deleteUser } = useDeleteUser();
 
   const handleDelete = (_id: string) => {
-    console.log("Deleting user with id: ", _id);
+    deleteUser({ id: _id });
+
     setDeleteDialogOpen(false);
+    alert("Usuario eliminado correctamente");
   };
 
   const openCreateDialog = () => {
@@ -68,6 +72,11 @@ const UsersAdministration = () => {
   const handleCloseModal = () => {
     setUserDialogOpen(false);
     setUserToEdit(null); // Limpiar `userToEdit` al cerrar
+  };
+
+  const handleOpenDeleteDialog = (id: string) => {
+    setSelectedUserId(id);
+    setDeleteDialogOpen(true);
   };
 
   return (
@@ -125,6 +134,7 @@ const UsersAdministration = () => {
                       <DropdownMenuItem
                         onSelect={(event) => {
                           event.preventDefault();
+                          handleOpenDeleteDialog(user.id);
                         }}
                       >
                         <Trash2 className="mr-2 h-4 w-4" />
@@ -141,7 +151,9 @@ const UsersAdministration = () => {
         <Dialog open={userDialogOpen} onOpenChange={setUserDialogOpen}>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Editar Usuario</DialogTitle>
+              <DialogTitle>
+                {isEditMode ? "Editar Usuario" : "Crear Usuario"}
+              </DialogTitle>
               <DialogDescription>
                 Realiza cambios en el usuario aquí. Haz clic en guardar cuando
                 termines.

@@ -9,6 +9,7 @@ import PublicRoute from "@/shared/infrastructure/route/PublicRoute";
 import { Suspense } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import AppSidebar from "../../layout/SideBar";
+import { ChargePage } from "../custom/ChargePage";
 
 const { authenticatedEntryPath } = appConfig;
 
@@ -59,7 +60,7 @@ export const PrincipalViews = () => {
     <Suspense
       fallback={
         <div className="flex flex-auto flex-col h-[100vh]">
-          <p>Loading</p>
+          <ChargePage />
         </div>
       }
     >

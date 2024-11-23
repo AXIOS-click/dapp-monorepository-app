@@ -80,8 +80,8 @@ export const TabAnalytics = () => {
   }, [queryParams]);
 
   return (
-    <div className="container mx-auto">
-      <Card className="lg:sticky lg:top-4 lg:self-start">
+    <div className="mx-auto">
+      <Card className=" lg:top-4 lg:self-start">
         <CardContent className="p-4">
           <h2 className="text-2xl font-bold mb-4">Filtros</h2>
           <Tabs defaultValue="dates" className="w-full">

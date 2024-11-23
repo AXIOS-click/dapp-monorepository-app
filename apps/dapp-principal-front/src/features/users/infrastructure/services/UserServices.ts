@@ -28,3 +28,10 @@ export async function updateUser(
   );
   return response.data;
 }
+
+export async function deleteUser(id: string): Promise<IUserBase> {
+  const response = await BaseService.delete<IUserBase>(
+    `/ms-authorization/users/${id}`
+  );
+  return response.data;
+}

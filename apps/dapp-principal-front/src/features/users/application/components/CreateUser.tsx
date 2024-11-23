@@ -142,6 +142,7 @@ export const CreateUser: FC<CreateUserProps> = ({
           type="email"
           {...register("email")}
           autoComplete="off"
+          disabled={isEditMode}
         />
         {errors.email && (
           <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
