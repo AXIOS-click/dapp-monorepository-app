@@ -17,6 +17,7 @@ import {
 } from "@/shared/application/components/ui/table";
 import { format } from "date-fns";
 import { useMemo } from "react";
+import { downloadMessagesExcel } from "../../infrastructure/messageService";
 import { QueryParams, useMessages } from "../hooks/useMessage";
 
 export function MessagesTable({
@@ -59,91 +60,117 @@ export function MessagesTable({
   if (isLoading) return <div>Loading...</div>;
   if (isError) return <div>No se encontró datos para tu búsqueda</div>;
 
-  return (
-    <Table className="min-w-full border border-gray-200 rounded-lg shadow-sm">
-      <TableHeader className="bg-gray-100">
-        <TableRow>
-          <TableHead>#</TableHead>
-          <TableHead className="w-48 min-w-48">Timestamp</TableHead>
-          {variableHeaders.map((variableName, i) => (
-            <TableHead key={`${variableName}-${i}`}>
-              {variableName ?? ""}
-            </TableHead>
-          ))}
-        </TableRow>
-      </TableHeader>
-      <TableBody className="bg-white">
-        {data?.data.map((message, index) => (
-          <TableRow
-            key={`${message.timestamp}-${index}`}
-            className="hover:bg-gray-50"
-          >
-            <TableCell>{index + 1}</TableCell>
-            <TableCell className="w-48 min-w-48">
-              {format(new Date(message.timestamp), "dd/MM/yyyy HH:mm:ss a")}
-            </TableCell>
-            {variableHeaders.map((variableName, i) => {
-              const variable = message.variables.find(
-                (v) => v.name === variableName
-              );
-              return (
-                <TableCell key={`${variableName}-${i}`}>
-                  {variable ? variable.value : "-"}
-                </TableCell>
-              );
-            })}
-          </TableRow>
-        ))}
-      </TableBody>
+  const handleDownload = async () => {
+    const params = {
+      startDate:
+        typeof startDate === "string"
+          ? startDate
+          : startDate?.toISOString() ?? new Date().toISOString(),
+      endDate:
+        typeof endDate === "string"
+          ? endDate
+          : endDate?.toISOString() ?? new Date().toISOString(),
+      page,
+      limit: data?.totalRecords ?? limit, // Adjust as needed
+      ...rest,
+    };
 
-      <TableFooter>
-        <TableRow className="bg-white !text-gray-900 hover:bg-white border-y-2 border">
-          <TableCell
-            colSpan={10 + variableHeaders.length}
-            className="px-4 py-2"
-          >
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-500 !hover:bg-white">
-                Mostrando {data?.data.length} de {data?.totalRecords}
-              </span>
-              <div className="flex items-center space-x-2">
-                <Select
-                  value={limit.toString()}
-                  onValueChange={(value) => onLimitChange(parseInt(value))}
-                >
-                  <SelectTrigger className="w-16 border-gray-300">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="5">5</SelectItem>
-                    <SelectItem value="15">15</SelectItem>
-                    <SelectItem value="20">20</SelectItem>
-                    <SelectItem value={data?.totalRecords.toString() ?? "50"}>
-                      All
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-                <Button
-                  onClick={() => onPageChange(page - 1)}
-                  disabled={page === 1}
-                  variant="outline"
-                  className="text-gray-600 px-3 py-1"
-                >
-                  Previous
-                </Button>
-                <Button
-                  onClick={() => onPageChange(page + 1)}
-                  disabled={page === data?.totalPages}
-                  variant="outline"
-                  className="text-gray-600 px-3 py-1"
-                >
-                  Next
-                </Button>
+    try {
+      await downloadMessagesExcel(params);
+    } catch (error) {
+      console.error("Download failed:", error);
+    }
+  };
+  return (
+    <>
+      <div className="flex justify-start mb-2">
+        <Button onClick={handleDownload}>Download Excel</Button>
+      </div>
+      <Table className="min-w-full border border-gray-200 rounded-lg shadow-sm">
+        <TableHeader className="bg-gray-100">
+          <TableRow>
+            <TableHead>#</TableHead>
+            <TableHead className="w-48 min-w-48">Timestamp</TableHead>
+            {variableHeaders.map((variableName, i) => (
+              <TableHead key={`${variableName}-${i}`}>
+                {variableName ?? ""}
+              </TableHead>
+            ))}
+          </TableRow>
+        </TableHeader>
+        <TableBody className="bg-white">
+          {data?.data.map((message, index) => (
+            <TableRow
+              key={`${message.timestamp}-${index}`}
+              className="hover:bg-gray-50"
+            >
+              <TableCell>{index + 1}</TableCell>
+              <TableCell className="w-48 min-w-48">
+                {format(new Date(message.timestamp), "dd/MM/yyyy HH:mm:ss a")}
+              </TableCell>
+              {variableHeaders.map((variableName, i) => {
+                const variable = message.variables.find(
+                  (v) => v.name === variableName
+                );
+                return (
+                  <TableCell key={`${variableName}-${i}`}>
+                    {variable ? variable.value : "-"}
+                  </TableCell>
+                );
+              })}
+            </TableRow>
+          ))}
+        </TableBody>
+
+        <TableFooter>
+          <TableRow className="bg-white !text-gray-900 hover:bg-white border-y-2 border">
+            <TableCell
+              colSpan={10 + variableHeaders.length}
+              className="px-4 py-2"
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-500 !hover:bg-white">
+                  Mostrando {data?.data.length} de {data?.totalRecords}
+                </span>
+                <div className="flex items-center space-x-2">
+                  <Select
+                    value={limit.toString()}
+                    onValueChange={(value) => onLimitChange(parseInt(value))}
+                  >
+                    <SelectTrigger className="w-16 border-gray-300">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="5">5</SelectItem>
+                      <SelectItem value="15">15</SelectItem>
+                      <SelectItem value="20">20</SelectItem>
+                      <SelectItem value={data?.totalRecords.toString() ?? "50"}>
+                        All
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Button
+                    onClick={() => onPageChange(page - 1)}
+                    disabled={page === 1}
+                    variant="outline"
+                    className="text-gray-600 px-3 py-1"
+                  >
+                    Previous
+                  </Button>
+                  <Button
+                    onClick={() => onPageChange(page + 1)}
+                    disabled={page === data?.totalPages}
+                    variant="outline"
+                    className="text-gray-600 px-3 py-1"
+                  >
+                    Next
+                  </Button>
+                </div>
               </div>
-            </div>
-          </TableCell>
-        </TableRow>
-      </TableFooter>
-    </Table>
+            </TableCell>
+          </TableRow>
+        </TableFooter>
+      </Table>
+    </>
   );
 }
