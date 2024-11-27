@@ -42,7 +42,6 @@ export class RabbitMQConsumerService implements OnModuleInit {
           msg.content.toString(),
           error.message,
         );
-        this.channel.ack(msg);
       }
     });
   }

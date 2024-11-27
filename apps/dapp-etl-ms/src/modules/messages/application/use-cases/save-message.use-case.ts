@@ -31,7 +31,6 @@ export class SaveMessageUseCase {
       'evento',
       d.evento,
     );
-
     // Crear el mensaje con las relaciones y variables
     await this.messageRepository.createMessage({
       timestamp: new Date(ts),
