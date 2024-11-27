@@ -9,6 +9,8 @@ export class MessagesController {
 
   @Get()
   async getMessages(
+    @Query('startTime') startTime?: string,
+    @Query('endTime') endTime?: string,
     @Query('startDate') startDate?: string,
     @Query('endDate') endDate?: string,
     @Query('companyCodeId') companyCodeId?: string,
@@ -21,12 +23,26 @@ export class MessagesController {
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 10,
   ) {
+    let startTimestamp: Date | undefined;
+    let endTimestamp: Date | undefined;
+
+    if (startDate && startTime) {
+      startTimestamp = new Date(`${startDate}T${startTime}`);
+    } else if (startDate) {
+      startTimestamp = new Date(startDate);
+    }
+
+    if (endDate && endTime) {
+      endTimestamp = new Date(`${endDate}T${endTime}`);
+    } else if (endDate) {
+      endTimestamp = new Date(endDate);
+    }
     const filters = {
       ...(startDate &&
         endDate && {
           timestamp: {
-            gte: new Date(startDate),
-            lte: new Date(endDate),
+            gte: startTimestamp,
+            lte: endTimestamp,
           },
         }),
       ...(companyCodeId && { companyCodeId }),
@@ -54,6 +70,8 @@ export class MessagesController {
   @Header('Content-Disposition', 'attachment; filename="data.xlsx"')
   async getMessagesDownload(
     @Res() res: Response,
+    @Query('startTime') startTime?: string,
+    @Query('endTime') endTime?: string,
     @Query('startDate') startDate?: string,
     @Query('endDate') endDate?: string,
     @Query('companyCodeId') companyCodeId?: string,
@@ -66,12 +84,26 @@ export class MessagesController {
     @Query('page') page: number = 1,
     @Query('limit') limit: number = 10,
   ) {
+    let startTimestamp: Date | undefined;
+    let endTimestamp: Date | undefined;
+
+    if (startDate && startTime) {
+      startTimestamp = new Date(`${startDate}T${startTime}`);
+    } else if (startDate) {
+      startTimestamp = new Date(startDate);
+    }
+
+    if (endDate && endTime) {
+      endTimestamp = new Date(`${endDate}T${endTime}`);
+    } else if (endDate) {
+      endTimestamp = new Date(endDate);
+    }
     const filters = {
       ...(startDate &&
         endDate && {
           timestamp: {
-            gte: new Date(startDate),
-            lte: new Date(endDate),
+            gte: startTimestamp,
+            lte: endTimestamp,
           },
         }),
       ...(companyCodeId && { companyCodeId }),
@@ -115,9 +147,23 @@ export class MessagesController {
 
     // Prepare the data rows
     const dataRows = toCONVERT.data.map((message, index) => {
+      const timestamp = new Date(message.timestamp);
       const row = {
         index: index + 1,
-        timestamp: message.timestamp,
+        timestamp: `${timestamp.getDate().toString().padStart(2, '0')}/${(
+          timestamp.getMonth() + 1
+        )
+          .toString()
+          .padStart(
+            2,
+            '0',
+          )}/${timestamp.getFullYear()} ${timestamp.getHours().toString().padStart(2, '0')}:${timestamp
+          .getMinutes()
+          .toString()
+          .padStart(
+            2,
+            '0',
+          )}:${timestamp.getSeconds().toString().padStart(2, '0')}`,
       };
 
       message.variables.forEach((variable) => {

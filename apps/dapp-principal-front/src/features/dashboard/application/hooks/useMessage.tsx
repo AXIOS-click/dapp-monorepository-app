@@ -16,12 +16,21 @@ export interface QueryParams {
   eventoId?: string;
   page?: number;
   limit?: number;
+  startTime?: string;
+  endTime?: string;
 }
 
-export function useMessages(queryParams: QueryParams) {
+export function useMessages(queryParams: QueryParams | null, enabled: boolean) {
+  const sanitizedParams = queryParams
+    ? Object.fromEntries(
+        Object.entries(queryParams).filter(([_, v]) => v !== undefined)
+      )
+    : {};
+
   const messagesQuery = useQuery<IMessageResponse>({
-    queryKey: ["messages", queryParams],
-    queryFn: () => getMessages(queryParams),
+    queryKey: ["messages", sanitizedParams],
+    queryFn: () => getMessages(sanitizedParams ?? {}),
+    enabled,
     retry: 2,
   });
 

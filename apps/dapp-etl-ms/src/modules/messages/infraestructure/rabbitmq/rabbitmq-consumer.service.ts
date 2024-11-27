@@ -19,7 +19,7 @@ export class RabbitMQConsumerService implements OnModuleInit {
     const connection = await connect(rabbitUrl);
     this.channel = await connection.createChannel();
 
-    const queue = 'plc_data';
+    const queue = 'data_plc';
     await this.channel.assertQueue(queue, { durable: true });
 
     console.log(`Listening on queue: ${queue}`);

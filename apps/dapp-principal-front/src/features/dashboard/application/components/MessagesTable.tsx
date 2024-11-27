@@ -45,7 +45,7 @@ export function MessagesTable({
 >) {
   const variableHeaders = useMemo(() => {
     const allVariableNames = new Set<string>();
-    data?.data.forEach((message) => {
+    data?.data?.forEach((message) => {
       message.variables.forEach((variable) => {
         allVariableNames.add(variable.name);
       });
@@ -87,7 +87,7 @@ export function MessagesTable({
           <TableRow>
             <TableHead>#</TableHead>
             <TableHead className="w-48 min-w-48">Timestamp</TableHead>
-            {variableHeaders.map((variableName, i) => (
+            {variableHeaders?.map((variableName, i) => (
               <TableHead key={`${variableName}-${i}`}>
                 {variableName ?? ""}
               </TableHead>
@@ -95,17 +95,17 @@ export function MessagesTable({
           </TableRow>
         </TableHeader>
         <TableBody className="bg-white">
-          {data?.data.map((message, index) => (
+          {data?.data?.map((message, index) => (
             <TableRow
-              key={`${message.timestamp}-${index}`}
+              key={`${message?.timestamp}-${index}`}
               className="hover:bg-gray-50"
             >
               <TableCell>{index + 1}</TableCell>
               <TableCell className="w-48 min-w-48">
-                {format(new Date(message.timestamp), "dd/MM/yyyy HH:mm:ss a")}
+                {format(new Date(message?.timestamp), "dd/MM/yyyy HH:mm:ss a")}
               </TableCell>
-              {variableHeaders.map((variableName, i) => {
-                const variable = message.variables.find(
+              {variableHeaders?.map((variableName, i) => {
+                const variable = message?.variables?.find(
                   (v) => v.name === variableName
                 );
                 return (
@@ -121,12 +121,12 @@ export function MessagesTable({
         <TableFooter>
           <TableRow className="bg-white !text-gray-900 hover:bg-white border-y-2 border">
             <TableCell
-              colSpan={10 + variableHeaders.length}
+              colSpan={10 + variableHeaders?.length}
               className="px-4 py-2"
             >
               <div className="flex items-center justify-between">
                 <span className="text-sm text-gray-500 !hover:bg-white">
-                  Mostrando {data?.data.length} de {data?.totalRecords}
+                  Mostrando {data?.data?.length} de {data?.totalRecords}
                 </span>
                 <div className="flex items-center space-x-2">
                   <Select
@@ -140,7 +140,9 @@ export function MessagesTable({
                       <SelectItem value="5">5</SelectItem>
                       <SelectItem value="15">15</SelectItem>
                       <SelectItem value="20">20</SelectItem>
-                      <SelectItem value={data?.totalRecords.toString() ?? "50"}>
+                      <SelectItem
+                        value={data?.totalRecords?.toString() ?? "50"}
+                      >
                         All
                       </SelectItem>
                     </SelectContent>

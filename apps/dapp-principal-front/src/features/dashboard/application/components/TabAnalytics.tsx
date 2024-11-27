@@ -24,7 +24,7 @@ import {
   TabsTrigger,
 } from "@/shared/application/components/ui/tabs";
 import { cn } from "@/shared/application/lib/utils";
-import { addDays, format } from "date-fns";
+import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
@@ -36,11 +36,23 @@ export const TabAnalytics = () => {
   const { allConfigSchematics } = DataCoreStore();
   const startDate = new Date();
   startDate.setMonth(new Date().getMonth() - 1);
-
-  console.log("startDate", startDate);
-  const [queryParams, setQueryParams] = useState({
-    startDate,
-    endDate: new Date(),
+  const [queryParams, setQueryParams] = useState<{
+    startDate: Date | undefined;
+    endDate: Date | undefined;
+    companyCodeId: string;
+    subCompanyCodeId: string;
+    machineId: string;
+    areaId: string;
+    plcId: string;
+    lineaId: string;
+    eventoId: string;
+    page: number;
+    limit: number;
+    startTime: "";
+    endTime: "";
+  }>({
+    startDate: undefined,
+    endDate: undefined,
     companyCodeId: "",
     subCompanyCodeId: "",
     machineId: "",
@@ -50,7 +62,17 @@ export const TabAnalytics = () => {
     eventoId: "",
     page: 1,
     limit: 15,
+    startTime: "",
+    endTime: "",
   });
+  const [executeSearch, setExecuteSearch] = useState(false);
+
+  const handleSearch = () => {
+    if (!queryParams.startDate || !queryParams.endDate) {
+      return;
+    }
+    setExecuteSearch(true);
+  };
 
   const handleInputChange = (
     name: string,
@@ -77,12 +99,10 @@ export const TabAnalytics = () => {
           diffInMonths > 1 ||
           (diffInMonths === 1 && end.getDate() > start.getDate())
         ) {
-          console.error(
-            "La diferencia entre las fechas no puede exceder un mes."
-          );
           return prev; // No actualizar el estado
         }
       }
+      setExecuteSearch(false); // Resetear el estado para futuras búsquedas
 
       return updatedParams;
     });
@@ -90,18 +110,19 @@ export const TabAnalytics = () => {
 
   const handlePageChange = (newPage: number) => {
     setQueryParams((prev) => ({ ...prev, page: newPage }));
+    setExecuteSearch(true); // Reejecutar la búsqueda al cambiar de página
   };
 
   const handleLimitChange = (newLimit: number) => {
     setQueryParams((prev) => ({ ...prev, limit: newLimit, page: 1 })); // Reset page to 1 when limit changes
+    setExecuteSearch(true); // Reejecutar la búsqueda al cambiar el límite
   };
 
   useEffect(() => {
     const { startDate, endDate, machineId, areaId, lineaId, eventoId } =
       queryParams;
+
     const complete =
-      Boolean(startDate) &&
-      Boolean(endDate) &&
       Boolean(machineId) &&
       Boolean(areaId) &&
       Boolean(lineaId) &&
@@ -111,29 +132,53 @@ export const TabAnalytics = () => {
   }, [queryParams]);
 
   const [date, setDate] = useState<DateRange | undefined>({
-    from: new Date(2022, 0, 20),
-    to: addDays(new Date(2022, 0, 20), 20),
+    from: new Date(),
+    to: new Date(),
   });
 
-  const { data, isLoading, isError } = useMessages({
-    startDate:
-      typeof queryParams.startDate === "string"
-        ? queryParams.startDate
-        : queryParams.startDate?.toISOString() ?? new Date().toISOString(),
-    endDate:
-      typeof queryParams.endDate === "string"
-        ? queryParams.endDate
-        : queryParams.endDate?.toISOString() ?? new Date().toISOString(),
-    companyCodeId: queryParams.companyCodeId,
-    subCompanyCodeId: queryParams.subCompanyCodeId,
-    machineId: queryParams.machineId,
-    areaId: queryParams.areaId,
-    plcId: queryParams.plcId,
-    lineaId: queryParams.lineaId,
-    eventoId: queryParams.eventoId,
-    page: queryParams.page,
-    limit: queryParams.limit,
-  });
+  const handleDateChange = (range: DateRange | undefined) => {
+    setDate(range);
+    setQueryParams((prev) => ({
+      ...prev,
+      startDate: range?.from,
+      endDate: range?.to,
+    }));
+  };
+
+  const isEnabled: boolean = !!(
+    executeSearch &&
+    queryParams.startDate &&
+    queryParams.endDate
+  );
+
+  const { data, isLoading, isError } = useMessages(
+    {
+      startDate: queryParams.startDate
+        ? format(queryParams.startDate, "yyyy-MM-dd")
+        : undefined,
+      endDate: queryParams.endDate
+        ? format(queryParams.endDate, "yyyy-MM-dd")
+        : undefined,
+      companyCodeId: queryParams.companyCodeId,
+      subCompanyCodeId: queryParams.subCompanyCodeId,
+      machineId: queryParams.machineId,
+      areaId: queryParams.areaId,
+      plcId: queryParams.plcId,
+      lineaId: queryParams.lineaId,
+      eventoId: queryParams.eventoId,
+      page: queryParams.page,
+      limit: queryParams.limit,
+      startTime: queryParams.startTime ?? "00:00:00",
+      endTime: queryParams.endTime ?? "23:59:59",
+    },
+    isEnabled
+  );
+
+  useEffect(() => {
+    if (data || isError) {
+      setExecuteSearch(false); // Resetea el estado para futuras búsquedas
+    }
+  }, [data, isError]);
 
   return (
     <div className="mx-auto">
@@ -202,7 +247,7 @@ export const TabAnalytics = () => {
                         showOutsideDays
                         defaultMonth={date?.from}
                         selected={date}
-                        onSelect={setDate}
+                        onSelect={handleDateChange}
                         disabled={(date) =>
                           date > new Date() || date < new Date("1900-01-01")
                         }
@@ -210,40 +255,32 @@ export const TabAnalytics = () => {
                     </PopoverContent>
                   </Popover>
                 </div>
-                {/* <div className="space-y-2">
-                  <Label htmlFor="endDate">Fecha de fin</Label>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        variant={"outline"}
-                        className={cn(
-                          "w-full pl-3 text-left font-normal",
-                          !queryParams.endDate && "text-muted-foreground"
-                        )}
-                      >
-                        {queryParams.endDate ? (
-                          format(queryParams.endDate, "PPP")
-                        ) : (
-                          <span>Pick a date</span>
-                        )}
-                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                        mode="single"
-                        selected={queryParams.endDate}
-                        onSelect={(date) =>
-                          handleInputChange("endDate", date?.toISOString())
-                        }
-                        disabled={(date) =>
-                          date > new Date() || date < new Date("1900-01-01")
-                        }
-                        initialFocus
-                      />
-                    </PopoverContent>
-                  </Popover>
-                </div> */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="startTime">Hora de Inicio</Label>
+                    <input
+                      id="startTime"
+                      type="time"
+                      className="w-full border rounded-md p-2"
+                      value={queryParams.startTime}
+                      onChange={(e) =>
+                        handleInputChange("startTime", e.target.value)
+                      }
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="endTime">Hora de Fin</Label>
+                    <input
+                      id="endTime"
+                      type="time"
+                      className="w-full border rounded-md p-2"
+                      value={queryParams.endTime}
+                      onChange={(e) =>
+                        handleInputChange("endTime", e.target.value)
+                      }
+                    />
+                  </div>
+                </div>
               </div>
             </TabsContent>
             <TabsContent value="machine" className="space-y-4 mt-4">
@@ -361,6 +398,13 @@ export const TabAnalytics = () => {
             Consultar Mensajes
           </Button> */}
         </CardContent>
+        <Button
+          className="w-full mt-4"
+          disabled={!isFormComplete}
+          onClick={handleSearch} // Ejecutar búsqueda manualmente
+        >
+          Buscar
+        </Button>
       </Card>
 
       <Card className="mt-4">
