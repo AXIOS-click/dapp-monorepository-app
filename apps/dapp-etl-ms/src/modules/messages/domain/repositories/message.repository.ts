@@ -9,14 +9,21 @@ export class MessageRepositoryImpl {
       throw new Error(`Name is required for entity: ${entity}`);
     }
     try {
-      return await this.prisma[entity].upsert({
+      const existingRecord = await this.prisma[entity].findUnique({
         where: { name: value },
-        create: { name: value },
-        update: {},
       });
+      if (existingRecord) {
+        return existingRecord;
+      } else {
+        return await this.prisma[entity].create({
+          data: { name: value },
+        });
+      }
     } catch (error) {
-      console.error(`Error in upsert for entity ${entity}:`, error);
-      throw new Error(`Could not create or find ${entity}: ${error.message}`);
+      console.error(
+        `Error in upsert for entity ${entity}: ${value}, error: ${error}`,
+      );
+      throw new Error(`Could not create or find ${entity}: ${value}`);
     }
   }
   async createMessage(data: any) {

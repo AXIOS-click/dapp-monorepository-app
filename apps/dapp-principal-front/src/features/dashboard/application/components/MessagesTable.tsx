@@ -17,36 +17,32 @@ import {
 } from "@/shared/application/components/ui/table";
 import { format } from "date-fns";
 import { useMemo } from "react";
-import { downloadMessagesExcel } from "../../infrastructure/messageService";
-import { QueryParams, useMessages } from "../hooks/useMessage";
+import {
+  downloadMessagesExcel,
+  IMessageResponse,
+} from "../../infrastructure/messageService";
+import { QueryParams } from "../hooks/useMessage";
 
 export function MessagesTable({
   startDate,
   endDate,
-  page = 1,
-  limit = 15,
   onPageChange,
   onLimitChange,
+  data,
+  isLoading,
+  isError,
+  page,
+  limit,
   ...rest
 }: Readonly<
   QueryParams & {
     onPageChange: (newPage: number) => void;
     onLimitChange: (newLimit: number) => void;
+    data: IMessageResponse;
+    isLoading: boolean;
+    isError: boolean;
   }
 >) {
-  const { data, isLoading, isError } = useMessages({
-    startDate:
-      typeof startDate === "string"
-        ? startDate
-        : startDate?.toISOString() ?? new Date().toISOString(),
-    endDate:
-      typeof endDate === "string"
-        ? endDate
-        : endDate?.toISOString() ?? new Date().toISOString(),
-    page,
-    limit,
-    ...rest,
-  });
   const variableHeaders = useMemo(() => {
     const allVariableNames = new Set<string>();
     data?.data.forEach((message) => {
@@ -134,7 +130,7 @@ export function MessagesTable({
                 </span>
                 <div className="flex items-center space-x-2">
                   <Select
-                    value={limit.toString()}
+                    value={limit!.toString()}
                     onValueChange={(value) => onLimitChange(parseInt(value))}
                   >
                     <SelectTrigger className="w-16 border-gray-300">
@@ -150,7 +146,7 @@ export function MessagesTable({
                     </SelectContent>
                   </Select>
                   <Button
-                    onClick={() => onPageChange(page - 1)}
+                    onClick={() => onPageChange(page! - 1)}
                     disabled={page === 1}
                     variant="outline"
                     className="text-gray-600 px-3 py-1"
@@ -158,7 +154,7 @@ export function MessagesTable({
                     Previous
                   </Button>
                   <Button
-                    onClick={() => onPageChange(page + 1)}
+                    onClick={() => onPageChange(page! + 1)}
                     disabled={page === data?.totalPages}
                     variant="outline"
                     className="text-gray-600 px-3 py-1"

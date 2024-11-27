@@ -27,8 +27,10 @@ export class RabbitMQConsumerService implements OnModuleInit {
     this.channel.consume(queue, async (msg) => {
       try {
         const content = JSON.parse(msg.content.toString());
+
+        const { d } = content;
         await this.saveMessageUseCase.execute(content);
-        console.log('Message processed');
+        console.log('Message processed:', d.companyCode, d.subCompanyCode);
         this.channel.ack(msg);
       } catch (error) {
         console.error(

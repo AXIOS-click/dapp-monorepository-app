@@ -24,9 +24,12 @@ import {
   TabsTrigger,
 } from "@/shared/application/components/ui/tabs";
 import { cn } from "@/shared/application/lib/utils";
-import { format } from "date-fns";
+import { addDays, format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { useEffect, useState } from "react";
+import { DateRange } from "react-day-picker";
+import { useMessages } from "../hooks/useMessage";
+import { TabOverview } from "./TabOverview";
 
 export const TabAnalytics = () => {
   const [isFormComplete, setIsFormComplete] = useState(false);
@@ -54,7 +57,35 @@ export const TabAnalytics = () => {
     value: string | number | undefined
   ) => {
     if (value === undefined) return;
-    setQueryParams((prev) => ({ ...prev, [name]: value }));
+
+    setQueryParams((prev) => {
+      const updatedParams = { ...prev, [name]: value };
+
+      // Validar la diferencia máxima de un mes
+      const { startDate, endDate } = updatedParams;
+
+      if (startDate && endDate) {
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+
+        // Si la diferencia es mayor a un mes, no actualizar el estado
+        const diffInMonths =
+          end.getFullYear() * 12 +
+          end.getMonth() -
+          (start.getFullYear() * 12 + start.getMonth());
+        if (
+          diffInMonths > 1 ||
+          (diffInMonths === 1 && end.getDate() > start.getDate())
+        ) {
+          console.error(
+            "La diferencia entre las fechas no puede exceder un mes."
+          );
+          return prev; // No actualizar el estado
+        }
+      }
+
+      return updatedParams;
+    });
   };
 
   const handlePageChange = (newPage: number) => {
@@ -79,6 +110,31 @@ export const TabAnalytics = () => {
     setIsFormComplete(complete);
   }, [queryParams]);
 
+  const [date, setDate] = useState<DateRange | undefined>({
+    from: new Date(2022, 0, 20),
+    to: addDays(new Date(2022, 0, 20), 20),
+  });
+
+  const { data, isLoading, isError } = useMessages({
+    startDate:
+      typeof queryParams.startDate === "string"
+        ? queryParams.startDate
+        : queryParams.startDate?.toISOString() ?? new Date().toISOString(),
+    endDate:
+      typeof queryParams.endDate === "string"
+        ? queryParams.endDate
+        : queryParams.endDate?.toISOString() ?? new Date().toISOString(),
+    companyCodeId: queryParams.companyCodeId,
+    subCompanyCodeId: queryParams.subCompanyCodeId,
+    machineId: queryParams.machineId,
+    areaId: queryParams.areaId,
+    plcId: queryParams.plcId,
+    lineaId: queryParams.lineaId,
+    eventoId: queryParams.eventoId,
+    page: queryParams.page,
+    limit: queryParams.limit,
+  });
+
   return (
     <div className="mx-auto">
       <Card className=" lg:top-4 lg:self-start">
@@ -93,7 +149,7 @@ export const TabAnalytics = () => {
                 ) : null}
               </TabsTrigger>
               <TabsTrigger value="machine">
-                Máquina{" "}
+                Máquinas{" "}
                 {!queryParams.machineId ||
                 !queryParams.areaId ||
                 !queryParams.lineaId ? (
@@ -101,7 +157,7 @@ export const TabAnalytics = () => {
                 ) : null}
               </TabsTrigger>
               <TabsTrigger value="other">
-                Otros{" "}
+                Eventos{" "}
                 {!queryParams.lineaId || !queryParams.eventoId ? (
                   <span className="text-red-500">*</span>
                 ) : null}
@@ -120,8 +176,15 @@ export const TabAnalytics = () => {
                           !queryParams.startDate && "text-muted-foreground"
                         )}
                       >
-                        {queryParams.startDate ? (
-                          format(queryParams.startDate, "PPP")
+                        {date?.from ? (
+                          date.to ? (
+                            <>
+                              {format(date.from, "LLL dd, y")} -{" "}
+                              {format(date.to, "LLL dd, y")}
+                            </>
+                          ) : (
+                            format(date.from, "LLL dd, y")
+                          )
                         ) : (
                           <span>Pick a date</span>
                         )}
@@ -130,20 +193,24 @@ export const TabAnalytics = () => {
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0" align="start">
                       <Calendar
-                        mode="single"
-                        selected={queryParams.startDate}
-                        onSelect={(date) =>
-                          handleInputChange("startDate", date?.toISOString())
-                        }
+                        initialFocus
+                        captionLayout="dropdown"
+                        max={32}
+                        min={0}
+                        mode="range"
+                        numberOfMonths={2}
+                        showOutsideDays
+                        defaultMonth={date?.from}
+                        selected={date}
+                        onSelect={setDate}
                         disabled={(date) =>
                           date > new Date() || date < new Date("1900-01-01")
                         }
-                        initialFocus
                       />
                     </PopoverContent>
                   </Popover>
                 </div>
-                <div className="space-y-2">
+                {/* <div className="space-y-2">
                   <Label htmlFor="endDate">Fecha de fin</Label>
                   <Popover>
                     <PopoverTrigger asChild>
@@ -176,7 +243,7 @@ export const TabAnalytics = () => {
                       />
                     </PopoverContent>
                   </Popover>
-                </div>
+                </div> */}
               </div>
             </TabsContent>
             <TabsContent value="machine" className="space-y-4 mt-4">
@@ -299,21 +366,37 @@ export const TabAnalytics = () => {
       <Card className="mt-4">
         <CardContent className="p-4">
           {isFormComplete && (
-            <MessagesTable
-              startDate={queryParams.startDate}
-              endDate={queryParams.endDate}
-              companyCodeId={queryParams.companyCodeId}
-              subCompanyCodeId={queryParams.subCompanyCodeId}
-              machineId={queryParams.machineId}
-              areaId={queryParams.areaId}
-              plcId={queryParams.plcId}
-              lineaId={queryParams.lineaId}
-              eventoId={queryParams.eventoId}
-              page={queryParams.page}
-              limit={queryParams.limit}
-              onPageChange={handlePageChange}
-              onLimitChange={handleLimitChange}
-            />
+            <Tabs defaultValue="analytics" className="space-y-4">
+              <TabsList>
+                <TabsTrigger value="analytics">
+                  Consultas y analisis
+                </TabsTrigger>
+                <TabsTrigger value="overview">Graficas y resumen</TabsTrigger>
+              </TabsList>
+              <TabsContent value="overview" className="space-y-4">
+                <TabOverview data={data!} />
+              </TabsContent>
+              <TabsContent value="analytics" className="space-y-4">
+                <MessagesTable
+                  startDate={queryParams.startDate}
+                  endDate={queryParams.endDate}
+                  companyCodeId={queryParams.companyCodeId}
+                  subCompanyCodeId={queryParams.subCompanyCodeId}
+                  machineId={queryParams.machineId}
+                  areaId={queryParams.areaId}
+                  plcId={queryParams.plcId}
+                  lineaId={queryParams.lineaId}
+                  eventoId={queryParams.eventoId}
+                  page={queryParams.page}
+                  limit={queryParams.limit}
+                  onPageChange={handlePageChange}
+                  onLimitChange={handleLimitChange}
+                  data={data!}
+                  isLoading={isLoading}
+                  isError={isError}
+                />
+              </TabsContent>
+            </Tabs>
           )}
         </CardContent>
       </Card>
