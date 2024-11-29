@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button } from "@/shared/application/components/ui/button";
 import {
   Select,
@@ -43,6 +44,9 @@ export function MessagesTable({
     isError: boolean;
   }
 >) {
+
+
+
   const variableHeaders = useMemo(() => {
     const allVariableNames = new Set<string>();
     data?.data?.forEach((message) => {
@@ -77,6 +81,7 @@ export function MessagesTable({
       console.error("Download failed:", error);
     }
   };
+
   return (
     <>
       <div className="flex justify-start mb-2">
@@ -140,6 +145,8 @@ export function MessagesTable({
                       <SelectItem value="5">5</SelectItem>
                       <SelectItem value="15">15</SelectItem>
                       <SelectItem value="20">20</SelectItem>
+                      <SelectItem value="100">100</SelectItem>
+                      <SelectItem value="1000">1000</SelectItem>
                       <SelectItem
                         value={data?.totalRecords?.toString() ?? "50"}
                       >

@@ -186,6 +186,22 @@ services:
     depends_on:
       - nginx
 
+  rabbitmq:
+    image: rabbitmq:4.0-management
+    container_name: rabbitmq-dapp-container
+    restart: always
+    environment:
+      RABBITMQ_DEFAULT_USER: user
+      RABBITMQ_DEFAULT_PASS: password
+    ports:
+      - "15672:15672" # Interfaz web de RabbitMQ
+      - "1883:1883" # Puerto MQTT
+      - "5672:5672" # Puerto AMQP
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - dapp_network
+
 networks:
   dapp_network:
     driver: bridge
@@ -196,4 +212,6 @@ volumes:
   mongo_data:
     driver: local
   mysql_data:
+    driver: local
+  rabbitmq_data:
     driver: local
