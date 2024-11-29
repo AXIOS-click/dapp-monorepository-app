@@ -83,14 +83,12 @@ export const TabAnalytics = () => {
     setQueryParams((prev) => {
       const updatedParams = { ...prev, [name]: value };
 
-      // Validar la diferencia máxima de un mes
       const { startDate, endDate } = updatedParams;
 
       if (startDate && endDate) {
         const start = new Date(startDate);
         const end = new Date(endDate);
 
-        // Si la diferencia es mayor a un mes, no actualizar el estado
         const diffInMonths =
           end.getFullYear() * 12 +
           end.getMonth() -
@@ -99,10 +97,10 @@ export const TabAnalytics = () => {
           diffInMonths > 1 ||
           (diffInMonths === 1 && end.getDate() > start.getDate())
         ) {
-          return prev; // No actualizar el estado
+          return prev;
         }
       }
-      setExecuteSearch(false); // Resetear el estado para futuras búsquedas
+      setExecuteSearch(false);
 
       return updatedParams;
     });
@@ -110,17 +108,16 @@ export const TabAnalytics = () => {
 
   const handlePageChange = (newPage: number) => {
     setQueryParams((prev) => ({ ...prev, page: newPage }));
-    setExecuteSearch(true); // Reejecutar la búsqueda al cambiar de página
+    setExecuteSearch(true);
   };
 
   const handleLimitChange = (newLimit: number) => {
-    setQueryParams((prev) => ({ ...prev, limit: newLimit, page: 1 })); // Reset page to 1 when limit changes
-    setExecuteSearch(true); // Reejecutar la búsqueda al cambiar el límite
+    setQueryParams((prev) => ({ ...prev, limit: newLimit, page: 1 }));
+    setExecuteSearch(true);
   };
 
   useEffect(() => {
-    const { startDate, endDate, machineId, areaId, lineaId, eventoId } =
-      queryParams;
+    const { machineId, areaId, lineaId, eventoId } = queryParams;
 
     const complete =
       Boolean(machineId) &&

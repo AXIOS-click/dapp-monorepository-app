@@ -171,6 +171,21 @@ services:
       - LOG_LEVEL=debug
     networks:
       - dapp_network
+
+  dapp-principal-front:
+    build:
+      context: ./apps/dapp-principal-front
+      dockerfile: Dockerfile
+    container_name: dapp-principal-front-container
+    ports:
+      - "3008:80"
+    environment:
+      - VITE_PUBLIC_API_URL=http://localhost:4000
+    networks:
+      - dapp_network
+    depends_on:
+      - nginx
+
 networks:
   dapp_network:
     driver: bridge
