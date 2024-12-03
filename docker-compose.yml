@@ -71,6 +71,7 @@ services:
     build:
       context: ./apps/dapp-etl-ms
     container_name: dapp-etl-ms-container
+    restart: always
     env_file:
       - ./apps/dapp-etl-ms/.env
     ports:
@@ -180,7 +181,7 @@ services:
     ports:
       - "3008:80"
     environment:
-      - VITE_PUBLIC_API_URL=http://localhost:4000
+      - VITE_PUBLIC_API_URL=http://192.168.20.33:4000
     networks:
       - dapp_network
     depends_on:
