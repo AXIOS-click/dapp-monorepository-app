@@ -48,8 +48,8 @@ export const TabAnalytics = () => {
     eventoId: string;
     page: number;
     limit: number;
-    startTime: "";
-    endTime: "";
+    startTime: string;
+    endTime: string;
   }>({
     startDate: undefined,
     endDate: undefined,
@@ -62,8 +62,8 @@ export const TabAnalytics = () => {
     eventoId: "",
     page: 1,
     limit: 15,
-    startTime: "",
-    endTime: "",
+    startTime: "00:00:00",
+    endTime: "23:59:00",
   });
   const [executeSearch, setExecuteSearch] = useState(false);
 

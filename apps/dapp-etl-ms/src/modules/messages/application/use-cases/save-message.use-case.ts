@@ -31,9 +31,12 @@ export class SaveMessageUseCase {
       'evento',
       d.evento,
     );
-    // Crear el mensaje con las relaciones y variables
+    const utcOffset = -5 * 60;
+    const date = new Date(ts);
+    const utcDate = new Date(date.getTime() + utcOffset * 60000);
+
     await this.messageRepository.createMessage({
-      timestamp: new Date(ts),
+      timestamp: utcDate,
       companyCodeId: company.id,
       subCompanyCodeId: subCompany.id,
       machineId: machine.id,
