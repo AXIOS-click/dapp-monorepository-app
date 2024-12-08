@@ -45,6 +45,7 @@ export function MessagesTable({
     isError: boolean;
   }
 >) {
+  const [isDownloading, setIsDownloading] = useState(false);
   const variableHeaders = useMemo(() => {
     const allVariableNames = new Set<string>();
     data?.data?.forEach((message) => {
@@ -77,13 +78,17 @@ export function MessagesTable({
       await downloadMessagesExcel(params);
     } catch (error) {
       console.error("Download failed:", error);
+    } finally {
+      setIsDownloading(false); // 3. Finalizar descarga
     }
   };
 
   return (
     <>
       <div className="flex justify-start mb-2">
-        <Button onClick={handleDownload}>Download Excel</Button>
+        <Button onClick={handleDownload}>
+          {isDownloading ? "Descargando..." : "Download Excel"}
+        </Button>
       </div>
       <Table className="min-w-full border border-gray-200 rounded-lg shadow-sm">
         <TableHeader className="bg-gray-100">
