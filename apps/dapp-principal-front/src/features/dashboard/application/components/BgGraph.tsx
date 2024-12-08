@@ -41,22 +41,18 @@ const chartConfig = {
 
 export function BarGraph({ data }: { data: IMessageResponse }) {
   const toChart: Record<string, unknown>[] = React.useMemo(() => {
-    const chartData = data?.data
-      .map((message) => {
-        const chart: Record<string, string | number> = {
-          fecha: message.timestamp,
-        };
-        message.variables.forEach((variable) => {
-          const value = Number(variable.value);
-          if (!isNaN(value)) {
-            chart[variable.name] = value;
-          }
-        });
-        return chart;
-      })
-      .sort(
-        (a, b) => new Date(b.fecha).getTime() + new Date(a.fecha).getTime()
-      );
+    const chartData = data?.data.map((message) => {
+      const chart: Record<string, string | number> = {
+        fecha: message.timestamp,
+      };
+      message.variables.forEach((variable) => {
+        const value = Number(variable.value);
+        if (!isNaN(value)) {
+          chart[variable.name] = value;
+        }
+      });
+      return chart;
+    });
     return chartData ?? [];
   }, [data]);
 
