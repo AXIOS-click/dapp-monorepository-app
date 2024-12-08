@@ -68,9 +68,9 @@ export const TabAnalytics = () => {
   const [executeSearch, setExecuteSearch] = useState(false);
 
   const handleSearch = () => {
-    // if (!queryParams.startDate) {
-    //   return;
-    // }
+    if (!queryParams.startDate) {
+      return;
+    }
     setExecuteSearch(true);
   };
 
@@ -130,7 +130,7 @@ export const TabAnalytics = () => {
 
   const [date, setDate] = useState<DateRange | undefined>({
     from: new Date(),
-    to: new Date(),
+    to: undefined,
   });
 
   const handleDateChange = (range: DateRange | undefined) => {
@@ -142,11 +142,7 @@ export const TabAnalytics = () => {
     }));
   };
 
-  const isEnabled: boolean = !!(
-    executeSearch &&
-    queryParams.startDate &&
-    queryParams.endDate
-  );
+  const isEnabled: boolean = !!(executeSearch && queryParams.startDate);
 
   const { data, isLoading, isError } = useMessages(
     {
@@ -155,7 +151,10 @@ export const TabAnalytics = () => {
         : undefined,
       endDate: queryParams.endDate
         ? format(queryParams.endDate, "yyyy-MM-dd")
+        : queryParams.startDate
+        ? format(queryParams.startDate, "yyyy-MM-dd")
         : undefined,
+
       companyCodeId: queryParams.companyCodeId,
       subCompanyCodeId: queryParams.subCompanyCodeId,
       machineId: queryParams.machineId,
