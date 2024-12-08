@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button } from "@/shared/application/components/ui/button";
 import {
   Select,
@@ -34,6 +33,8 @@ export function MessagesTable({
   isError,
   page,
   limit,
+  startTime,
+  endTime,
   ...rest
 }: Readonly<
   QueryParams & {
@@ -44,9 +45,6 @@ export function MessagesTable({
     isError: boolean;
   }
 >) {
-
-
-
   const variableHeaders = useMemo(() => {
     const allVariableNames = new Set<string>();
     data?.data?.forEach((message) => {
@@ -71,7 +69,9 @@ export function MessagesTable({
           ? endDate
           : endDate?.toISOString() ?? new Date().toISOString(),
       page,
-      limit: data?.totalRecords ?? limit, // Adjust as needed
+      limit: data?.totalRecords ?? limit,
+      startTime,
+      endTime,
       ...rest,
     };
 

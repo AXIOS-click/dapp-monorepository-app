@@ -68,9 +68,9 @@ export const TabAnalytics = () => {
   const [executeSearch, setExecuteSearch] = useState(false);
 
   const handleSearch = () => {
-    if (!queryParams.startDate || !queryParams.endDate) {
-      return;
-    }
+    // if (!queryParams.startDate) {
+    //   return;
+    // }
     setExecuteSearch(true);
   };
 
@@ -435,6 +435,8 @@ export const TabAnalytics = () => {
                   data={data!}
                   isLoading={isLoading}
                   isError={isError}
+                  startTime={queryParams.startTime}
+                  endTime={queryParams.endTime}
                 />
               </TabsContent>
             </Tabs>
