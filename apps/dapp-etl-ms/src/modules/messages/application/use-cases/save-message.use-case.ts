@@ -31,7 +31,7 @@ export class SaveMessageUseCase {
       'evento',
       d.evento,
     );
-    const utcOffset = -5 * 60;
+    const utcOffset = 5 * 60;
     const date = new Date(ts);
     const utcDate = new Date(date.getTime() + utcOffset * 60000);
 
