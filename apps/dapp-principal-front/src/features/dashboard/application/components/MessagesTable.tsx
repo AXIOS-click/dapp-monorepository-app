@@ -60,6 +60,7 @@ export function MessagesTable({
   if (isError) return <div>No se encontró datos para tu búsqueda</div>;
 
   const handleDownload = async () => {
+    setIsDownloading(true);
     const params = {
       startDate: startDate ? format(startDate, "yyyy-MM-dd") : undefined,
       endDate: endDate
