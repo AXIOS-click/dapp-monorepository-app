@@ -60,14 +60,12 @@ export function MessagesTable({
 
   const handleDownload = async () => {
     const params = {
-      startDate:
-        typeof startDate === "string"
-          ? startDate
-          : startDate?.toISOString() ?? new Date().toISOString(),
-      endDate:
-        typeof endDate === "string"
-          ? endDate
-          : endDate?.toISOString() ?? new Date().toISOString(),
+      startDate: startDate ? format(startDate, "yyyy-MM-dd") : undefined,
+      endDate: endDate
+        ? format(endDate, "yyyy-MM-dd")
+        : startDate
+        ? format(startDate, "yyyy-MM-dd")
+        : undefined,
       page,
       limit: data?.totalRecords ?? limit,
       startTime,
