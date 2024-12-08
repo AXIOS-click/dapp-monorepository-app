@@ -55,7 +55,7 @@ export function BarGraph({ data }: { data: IMessageResponse }) {
         return chart;
       })
       .sort(
-        (a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime()
+        (a, b) => new Date(b.fecha).getTime() + new Date(a.fecha).getTime()
       );
     return chartData ?? [];
   }, [data]);
