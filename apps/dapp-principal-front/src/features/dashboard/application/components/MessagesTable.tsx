@@ -68,7 +68,7 @@ export function MessagesTable({
         ? format(startDate, "yyyy-MM-dd")
         : undefined,
       page,
-      limit: data?.totalRecords ?? limit,
+      limit: limit ?? data?.totalRecords,
       startTime,
       endTime,
       ...rest,
