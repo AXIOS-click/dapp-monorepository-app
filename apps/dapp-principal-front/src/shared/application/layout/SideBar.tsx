@@ -25,8 +25,9 @@ import {
   SidebarRail,
   SidebarTrigger,
 } from "@/shared/application/components/ui/sidebar";
-import { ChevronRight, GalleryVerticalEnd } from "lucide-react";
+import { ChevronRight, CirclePower, GalleryVerticalEnd } from "lucide-react";
 import * as React from "react";
+import { Button } from "../components/ui/button";
 
 export default function AppSidebar({
   children,
@@ -44,7 +45,7 @@ export default function AppSidebar({
   }, []);
 
   const { allRoles } = RolesStore();
-  const { userSession } = AuthStore();
+  const { userSession, logout } = AuthStore();
   const userRoles = userSession?.roles || [];
 
   if (!mounted) {
@@ -165,6 +166,14 @@ export default function AppSidebar({
           <SidebarMenu>
             <SidebarMenuItem></SidebarMenuItem>
           </SidebarMenu>
+          <Button
+            className="w-full"
+            onClick={() => {
+              logout();
+            }}
+          >
+            <CirclePower /> Logout
+          </Button>
         </SidebarFooter>
         <SidebarRail />
       </Sidebar>
