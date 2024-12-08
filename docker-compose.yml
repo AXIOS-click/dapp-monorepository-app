@@ -192,14 +192,16 @@ services:
     container_name: rabbitmq-dapp-container
     restart: always
     environment:
-      RABBITMQ_DEFAULT_USER: user
-      RABBITMQ_DEFAULT_PASS: password
+      RABBITMQ_DEFAULT_USER: dappProject
+      RABBITMQ_DEFAULT_PASS: dappSecuredPsh**
     ports:
       - "15672:15672" # Interfaz web de RabbitMQ
       - "1883:1883" # Puerto MQTT
       - "5672:5672" # Puerto AMQP
     volumes:
-      - rabbitmq_data:/var/lib/rabbitmq
+      - ./volumes/rabbitmq_data:/var/lib/rabbitmq
+      - ./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
+      - ./definitions.json:/etc/rabbitmq/definitions.json
     networks:
       - dapp_network
 

@@ -1,0 +1,55 @@
+{
+  "queues": [
+    {
+      "name": "data_plc",
+      "durable": true,
+      "auto_delete": false,
+      "vhost": "/",
+      "arguments": {}
+    }
+  ],
+  "exchanges": [
+    {
+      "name": "amq.topic",
+      "vhost": "/",
+      "type": "topic",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    }
+  ],
+  "bindings": [
+    {
+      "source": "amq.topic",
+      "vhost": "/",
+      "destination": "data_plc",
+      "destination_type": "queue",
+      "routing_key": "plcModule",
+      "arguments": {}
+    }
+  ],
+  "vhosts": [
+    {
+      "name": "/"
+    }
+  ],
+  "users": [
+    {
+      "name": "dappProject",
+      "password_hash": "xUEs6ktl/KvFYb6/nxcwpnBCdzD6i3a5wH2dWJ8cw3nDaKQS",
+      "tags": [
+        "administrator"
+      ]
+    }
+  ],
+  "permissions": [
+    {
+      "user": "dappProject",
+      "vhost": "/",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    }
+  ]
+}
