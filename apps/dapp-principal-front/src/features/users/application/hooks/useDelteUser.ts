@@ -11,7 +11,6 @@ export function useDeleteUser() {
     },
     onError: (error) => {
       console.error("Error al eliminar el usuario:", error);
-      alert("Hubo un problema al eliminar el usuario. Inténtelo nuevamente.");
     },
   });
 }

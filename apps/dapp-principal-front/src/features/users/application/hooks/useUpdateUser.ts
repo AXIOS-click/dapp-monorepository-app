@@ -13,7 +13,6 @@ export function useUpdateUser() {
     },
     onError: (error) => {
       console.error("Error al actualizar el usuario:", error);
-      alert("Hubo un problema al actualizar el usuario. Inténtelo nuevamente.");
     },
   });
 }

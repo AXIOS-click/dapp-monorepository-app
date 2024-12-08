@@ -172,7 +172,7 @@ export default function AppSidebar({
               logout();
             }}
           >
-            <CirclePower /> Logout
+            <CirclePower /> Cerrar sesión
           </Button>
         </SidebarFooter>
         <SidebarRail />
