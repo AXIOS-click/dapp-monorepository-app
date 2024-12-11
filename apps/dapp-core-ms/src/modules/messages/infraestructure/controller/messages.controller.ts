@@ -82,7 +82,6 @@ export class MessagesController {
     @Query('lineaId') lineaId?: string,
     @Query('eventoId') eventoId?: string,
     @Query('page') page: number = 1,
-    @Query('limit') limit: number = 10,
   ) {
     let startTimestamp: Date | undefined;
     let endTimestamp: Date | undefined;
@@ -118,7 +117,7 @@ export class MessagesController {
     const toCONVERT = await this.saveMessageUseCase.getMessagesByFilters(
       filters,
       page,
-      limit,
+      100000000000000,
     );
 
     // Extract all unique variable names for dynamic columns

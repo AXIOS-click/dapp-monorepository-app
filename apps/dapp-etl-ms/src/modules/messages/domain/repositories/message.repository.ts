@@ -80,12 +80,13 @@ export class MessageRepositoryImpl {
             name: true,
           },
         },
-        variables: {
-          select: {
-            name: true,
-            value: true,
-          },
-        },
+        // variables: {
+        //   select: {
+        //     name: true,
+        //     value: true,
+        //   },
+        // },
+        variablesTwo: true,
       },
       orderBy: {
         timestamp: 'desc', // Ordenamos por fecha descendente

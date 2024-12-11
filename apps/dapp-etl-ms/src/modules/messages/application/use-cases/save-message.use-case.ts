@@ -31,10 +31,11 @@ export class SaveMessageUseCase {
       'evento',
       d.evento,
     );
-    const utcOffset = 5 * 60;
-    const date = new Date(ts);
-    const utcDate = new Date(date.getTime() + utcOffset * 60000);
-
+    // Manejo del timestamp
+    const inputDate = new Date(ts); // Fecha original
+    const utcDate = new Date(
+      inputDate.getTime() - inputDate.getTimezoneOffset() * 60000,
+    ); // Convertir a UTC-0
     await this.messageRepository.createMessage({
       timestamp: utcDate,
       companyCodeId: company.id,
@@ -44,12 +45,7 @@ export class SaveMessageUseCase {
       plcId: plc.id,
       lineaId: linea.id,
       eventoId: evento.id,
-      variables: {
-        create: Object.entries(d.variables).map(([name, value]) => ({
-          name,
-          value: value.toString(),
-        })),
-      },
+      variablesTwo: d.variables,
     });
   }
 }

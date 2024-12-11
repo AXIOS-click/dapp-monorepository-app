@@ -1,4 +1,4 @@
-FROM node:18.15-slim
+FROM node:18
 
 WORKDIR /app
 
@@ -11,9 +11,9 @@ COPY . .
 COPY .env .env
 RUN npx prisma generate && npm run build
 
-EXPOSE ${PORT}
-
 COPY entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
 
-CMD ["/app/entrypoint.sh"]
+EXPOSE ${PORT}
+
+CMD ["npm", "run", "start:prod"]

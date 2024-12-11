@@ -32,15 +32,26 @@ export class MessageRepositoryImpl {
         area: { select: { name: true } },
         plc: { select: { name: true } },
         linea: { select: { name: true } },
-        variables: { select: { name: true, value: true } },
+        variablesTwo: true,
       },
+    });
+
+    const newResponse = messages.map((message) => {
+      const { variablesTwo, ...rest } = message;
+      return {
+        ...rest,
+        variables: Object.entries(variablesTwo).map(([key, value]) => ({
+          name: key,
+          value,
+        })),
+      };
     });
 
     // Obtener el total de registros que coinciden con los filtros
     const totalRecords = await this.prisma.message.count({ where: filters });
 
     return {
-      data: messages,
+      data: newResponse,
       totalRecords,
       totalPages: Math.ceil(totalRecords / convertedLimit),
       currentPage: page,

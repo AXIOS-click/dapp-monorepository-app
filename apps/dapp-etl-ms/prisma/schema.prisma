@@ -30,24 +30,23 @@ model Message {
   plc   Plc?    @relation(fields: [plcId], references: [id], onDelete: Cascade)
   plcId String? @db.ObjectId
 
-  linea   Linea?  @relation(fields: [lineaId], references: [id], onDelete: Cascade)
-  lineaId String? @db.ObjectId
-
-  variables Variable[]
+  linea        Linea?  @relation(fields: [lineaId], references: [id], onDelete: Cascade)
+  lineaId      String? @db.ObjectId
+  variablesTwo Json
 
   @@index([timestamp])
 }
 
-model Variable {
-  id    String @id @default(auto()) @map("_id") @db.ObjectId
-  name  String
-  value String
+// model Variable {
+//   id    String @id @default(auto()) @map("_id") @db.ObjectId
+//   name  String
+//   value String
 
-  messageId String  @db.ObjectId
-  message   Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+//   messageId String  @db.ObjectId
+//   message   Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
 
-  @@index([name])
-}
+//   @@index([name])
+// }
 
 model CompanyCode {
   id       String    @id @default(auto()) @map("_id") @db.ObjectId

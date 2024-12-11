@@ -111,7 +111,7 @@ export function MessagesTable({
             >
               <TableCell>{index + 1}</TableCell>
               <TableCell className="w-48 min-w-48">
-                {format(new Date(message?.timestamp), "dd/MM/yyyy HH:mm:ss a")}
+                {format(new Date(message?.timestamp), "dd/MM/yyyy HH:mm:ss")}
               </TableCell>
               {variableHeaders?.map((variableName, i) => {
                 const variable = message?.variables?.find(
